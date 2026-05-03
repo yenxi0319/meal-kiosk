@@ -113,7 +113,7 @@
       flex: 1 1 auto;
       min-height: 0;
       overflow: hidden;
-      padding: 6px 8px 8px;
+      padding: 4px 8px 6px;
       display: flex;
       flex-direction: column;
     }
@@ -137,7 +137,7 @@
       min-height: 0;
       display: grid;
       grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
-      gap: 14px;
+      gap: 10px;
       align-items: stretch;
       max-width: 1480px;
       width: 100%;
@@ -162,12 +162,12 @@
       display: flex;
       flex-direction: column;
       min-height: 0;
-      border: 1px solid var(--qr-panel-border);
+      border: 2.5px solid var(--qr-panel-border);
       box-shadow: var(--qr-panel-shadow);
     }
     .view[data-view="qr"] .panel-head {
-      padding: 8px 12px;
-      font-size: 13px;
+      padding: 6px 10px;
+      font-size: 12px;
     }
     .view[data-view="qr"] .panel-head .pill {
       font-size: 11px;
@@ -196,7 +196,7 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      padding: 8px 10px 10px;
+      padding: 6px 8px 8px;
     }
 
     /* 카메라 영역 (QR 스캐너 메인) */
@@ -249,10 +249,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       text-align: center;
-      gap: 4px;
-      padding: 6px 10px;
+      gap: 5px;
+      padding: 4px 8px 6px;
       overflow: hidden;
     }
     #student-panel.empty {
@@ -262,29 +262,40 @@
       justify-content: center;
       padding: 8px 12px;
     }
-    #student-panel .photo {
-      flex-shrink: 1;
-      flex-grow: 0;
-      width: min(90%, min(22vh, 150px));
+    /* 고정 정사각형 프레임: 원본 비율과 무관하게 동일 크기·cover로 표시 */
+    #student-panel .photo-frame {
+      flex: 0 1 auto;
+      width: min(100%, min(46dvh, calc(100dvh - 200px), 380px));
       max-width: 100%;
-      max-height: min(22vh, 150px);
       aspect-ratio: 1;
       height: auto;
-      border-radius: 10px;
-      object-fit: cover;
+      border-radius: 12px;
+      overflow: hidden;
       background: var(--surface);
-      border: 2px solid rgba(255, 255, 255, 0.45);
+      border: 2.5px solid rgba(255, 255, 255, 0.45);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      flex-shrink: 1;
+    }
+    #student-panel .photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 0;
+      border: 0;
+      box-shadow: none;
+      background: var(--surface);
     }
     #student-panel .name {
-      font-size: clamp(14px, 2.1vw, 20px);
+      font-size: clamp(13px, 1.9vw, 18px);
       font-weight: 800;
       letter-spacing: -0.02em;
-      line-height: 1.12;
+      line-height: 1.1;
       flex-shrink: 0;
     }
     #student-panel .sid {
-      font-size: clamp(11px, 1.45vw, 15px);
+      font-size: clamp(10px, 1.3vw, 14px);
       color: var(--text-muted);
       font-variant-numeric: tabular-nums;
       font-weight: 600;
@@ -292,23 +303,24 @@
       line-height: 1.1;
     }
     #student-panel .greet {
-      margin-top: 1px;
-      padding: 4px 10px;
+      margin-top: 2px;
+      padding: 6px 14px;
       background: rgba(52, 211, 153, 0.18);
       color: var(--success);
       border-radius: 999px;
-      font-size: clamp(10px, 1.35vw, 13px);
-      font-weight: 700;
+      font-size: clamp(20px, 2.8vw, 28px);
+      font-weight: 900;
       flex-shrink: 0;
       line-height: 1.2;
     }
     #student-panel .scan-time {
       color: var(--text-muted);
-      font-size: 10px;
+      font-size: clamp(18px, 2.4vw, 24px);
+      font-weight: 800;
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
-      margin-top: 1px;
-      line-height: 1.1;
+      margin-top: 2px;
+      line-height: 1.15;
     }
 
     /* ----------------- 버튼 ----------------- */
@@ -487,7 +499,7 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbydEdmD6j0U46VRhou5Dnm3RQFEfAB0y1bQ77I4RWtiuUTAeNveZzRU9ZurQPCE0a2nQw/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxhhabpzSWeytmx24eWWcOeNm1VSZqa-OrWDjwxcjjyc3h3WA15y8aOj4gTwpgIIHL_Bw/exec';
   </script>
 
   <header class="topnav">
@@ -714,8 +726,10 @@
     var rawPhoto = student && student.photoUrl ? student.photoUrl : '';
     var photo = rawPhoto ? ensurePhotoLarge(rawPhoto) : fallbackPhoto();
     var html = ''
+      + '<div class="photo-frame">'
       + '<img class="photo" src="' + escapeHtml(photo) + '" '
       + 'onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="" />'
+      + '</div>'
       + '<div class="name">' + escapeHtml(student.name || '이름 없음') + '</div>'
       + '<div class="sid">' + escapeHtml(student.studentId || '') + '</div>';
     if (opts.greet) {
@@ -822,8 +836,9 @@
     var config = {
       fps: 10,
       qrbox: function (vw, vh) {
-        var s = Math.min(vw, vh) * 0.72;
-        return { width: s, height: s };
+        var w = Math.floor(Math.min(vw * 0.94, vw - 8));
+        var h = Math.floor(Math.min(vh * 0.92, vh - 8));
+        return { width: Math.max(120, w), height: Math.max(120, h) };
       },
       aspectRatio: 1.0
     };
