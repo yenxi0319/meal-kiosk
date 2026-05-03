@@ -674,7 +674,7 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyjTJCwF-rXrR9s0dvxNV4DBImFhF7zuYdF8LonwZkRqrC7RdS63619txRvFJEYDuGnFw/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbz2Nu7rEuY6asv309KdtuebQMhcJ73BhVmiPPUAI2B0LyoqHNsWDGbdXLaYSkgW4sG2yg/exec';
   </script>
 
   <header class="topnav">
@@ -798,7 +798,97 @@
   var awaitingAck = false;       // 에러 모달이 떠 있는 동안은 스캔 무시
   var currentView = 'qr';
   var studentsCache = null;
+  /** 학번 → 학생 객체 (프리패치 명단, QR 시 서버 조회 없이 사용) */
+  var studentsById = Object.create(null);
+  /** 오늘 식사한 학번 (프리패치 todayLog + 낙관적 추가) */
+  var scannedToday = Object.create(null);
+  var studentsReady = false;
   var scanBeepAudioCtx = null;
+
+  function todayKeySeoul() {
+    try {
+      return new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date());
+    } catch (e) {
+      var d = new Date();
+      var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    }
+  }
+
+  function formatNowSeoul() {
+    try {
+      return new Intl.DateTimeFormat('sv-SE', {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).format(new Date()).replace(',', '');
+    } catch (e) {
+      var d = new Date();
+      var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' '
+          + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    }
+  }
+
+  function rebuildStudentsById(list) {
+    studentsById = Object.create(null);
+    (list || []).forEach(function (s) {
+      var id = String(s.studentId || '').trim();
+      if (id) studentsById[id] = s;
+    });
+  }
+
+  function applyTodayLogToScanned(res) {
+    scannedToday = Object.create(null);
+    if (res && res.ok && res.entries && res.entries.length) {
+      res.entries.forEach(function (e) {
+        var id = String(e.studentId || '').trim();
+        if (id) scannedToday[id] = true;
+      });
+    }
+  }
+
+  function isEligiblePeriod(student, todayKey) {
+    var s = String((student && student.periodStart) || '').trim();
+    var e = String((student && student.periodEnd) || '').trim();
+    if (!s || !e) return false;
+    return todayKey >= s && todayKey <= e;
+  }
+
+  function prefetchScanData() {
+    setStatus('명단 불러오는 중…', '');
+    studentsReady = false;
+    return Promise.all([api('students'), api('todayLog')])
+        .then(function (arr) {
+          var sres = arr[0];
+          var lres = arr[1];
+          if (sres && sres.ok) {
+            studentsCache = sres.students || [];
+            rebuildStudentsById(studentsCache);
+            studentsReady = true;
+          } else {
+            studentsCache = studentsCache || [];
+            rebuildStudentsById(studentsCache);
+            studentsReady = false;
+          }
+          if (lres && lres.ok) applyTodayLogToScanned(lres);
+          if (!qrRunning) setStatus('대기 중', '');
+        })
+        .catch(function (err) {
+          studentsReady = false;
+          setStatus('명단 로딩 실패: ' + (err && err.message ? err.message : err), 'err');
+        });
+  }
 
   /** QR 인식 성공 시 — Web Audio: 매우 큰 비프(스퀘어 + 밴드 + 컴프) */
   function playScanSuccessBeep() {
@@ -1078,26 +1168,79 @@
     stuListEl.addEventListener('keydown', onStudentCardActivate);
   }
 
-  /* ---------- 스캔 처리 ---------- */
+  /* ---------- 스캔 처리 (로컬 명단 즉시 조회, 시트 기록은 logMeal 비동기) ---------- */
   function onScanSuccess(decodedText) {
     if (awaitingAck || scanCooldown) return;
     scanCooldown = true;
     setTimeout(function () { scanCooldown = false; }, 1500);
 
-    setStatus('조회 중…', '');
-    api('scan', { code: decodedText })
-        .then(function (res) {
-          if (!res) throw new Error('빈 응답');
+    var code = String(decodedText || '').trim();
+    if (!code) {
+      setStatus('코드가 비어 있습니다.', 'err');
+      return;
+    }
 
-          if (res.status === 'success') {
-            setStatus('인식 완료', 'ok');
-            playScanSuccessBeep();
-            renderStudentPanel(res.student, { greet: '맛있게 식사하세요!', time: res.time });
+    if (!studentsReady || !studentsCache || !studentsCache.length) {
+      setStatus('명단 불러오는 중… 잠시 후 다시 스캔해 주세요.', 'err');
+      return;
+    }
+
+    var student = studentsById[code];
+    var todayK = todayKeySeoul();
+
+    if (!student) {
+      awaitingAck = true;
+      clearStudentPanel('등록되지 않은 학생입니다.');
+      setStatus('미등록', 'err');
+      openModal('error-modal', {
+        title: '등록되지 않은 학생',
+        message: '등록이 안 된 학생입니다. 확인해주세요.',
+        icon: 'warn'
+      });
+      return;
+    }
+
+    if (!isEligiblePeriod(student, todayK)) {
+      awaitingAck = true;
+      renderStudentPanel(student, {});
+      setStatus('미등록', 'err');
+      openModal('error-modal', {
+        title: '등록되지 않은 학생',
+        message: '등록이 안 된 학생입니다. 확인해주세요.',
+        icon: 'warn'
+      });
+      return;
+    }
+
+    if (scannedToday[code]) {
+      awaitingAck = true;
+      renderStudentPanel(student, { time: '' });
+      setStatus('중복 스캔', 'err');
+      openModal('error-modal', {
+        title: '중복 스캔 감지',
+        message: '이미 식사한 학생입니다.',
+        icon: 'warn'
+      });
+      return;
+    }
+
+    var localTs = formatNowSeoul();
+    scannedToday[code] = true;
+    setStatus('인식 완료', 'ok');
+    playScanSuccessBeep();
+    renderStudentPanel(student, { greet: '맛있게 식사하세요!', time: localTs });
+
+    api('logMeal', { studentId: code, studentName: String(student.name || '').trim() })
+        .then(function (res) {
+          if (!res) return;
+          if (res.ok && res.status === 'success' && res.time) {
+            renderStudentPanel(student, { greet: '맛있게 식사하세요!', time: res.time });
             return;
           }
           if (res.status === 'duplicate') {
+            delete scannedToday[code];
             awaitingAck = true;
-            renderStudentPanel(res.student, { time: res.time });
+            renderStudentPanel(student, { time: res.time || '' });
             setStatus('중복 스캔', 'err');
             openModal('error-modal', {
               title: '중복 스캔 감지',
@@ -1106,22 +1249,14 @@
             });
             return;
           }
-          if (res.status === 'not_registered') {
-            awaitingAck = true;
-            clearStudentPanel('등록되지 않은 학생입니다.');
-            setStatus('미등록', 'err');
-            openModal('error-modal', {
-              title: '등록되지 않은 학생',
-              message: '등록이 안 된 학생입니다. 확인해주세요.',
-              icon: 'warn'
-            });
-            return;
+          if (res.status === 'error' || res.status === 'invalid') {
+            delete scannedToday[code];
+            setStatus(res.message || '기록 실패', 'err');
           }
-          // invalid / error 등
-          setStatus(res.message || '오류', 'err');
         })
         .catch(function (err) {
-          setStatus('서버 오류: ' + (err && err.message || err), 'err');
+          delete scannedToday[code];
+          setStatus('기록 실패: ' + (err && err.message ? err.message : '네트워크'), 'err');
         });
   }
 
@@ -1242,14 +1377,22 @@
   /* ---------- 학생정보 ---------- */
   function loadStudents(force) {
     var listEl = document.getElementById('stu-list');
-    if (studentsCache && !force) { renderStudents(studentsCache); return; }
+    if (studentsReady && !force) { renderStudents(studentsCache || []); return; }
     listEl.innerHTML = '<div class="empty-state">불러오는 중…</div>';
-    api('students').then(function (res) {
+    var req = force
+        ? Promise.all([api('students'), api('todayLog')])
+        : api('students').then(function (s) { return [s, null]; });
+    req.then(function (arr) {
+      var res = Array.isArray(arr) ? arr[0] : arr;
+      var logRes = Array.isArray(arr) ? arr[1] : null;
       if (!res || !res.ok) {
         listEl.innerHTML = '<div class="empty-state">' + escapeHtml((res && res.error) || '오류') + '</div>';
         return;
       }
       studentsCache = res.students || [];
+      rebuildStudentsById(studentsCache);
+      studentsReady = true;
+      if (logRes && logRes.ok) applyTodayLogToScanned(logRes);
       renderStudents(studentsCache);
     }).catch(function (err) {
       listEl.innerHTML = '<div class="empty-state">서버 오류: ' + escapeHtml(err.message || '') + '</div>';
@@ -1285,6 +1428,7 @@
 
   /* ---------- 시작 ---------- */
   showView('qr');
+  prefetchScanData();
   // 페이지 로드 직후 자동 시작은 하지 않음 (브라우저 정책상 사용자 상호작용 후가 안정적)
 
 })();
