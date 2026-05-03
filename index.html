@@ -176,7 +176,7 @@
     .panel-head {
       padding: 12px 16px;
       border-bottom: 1px solid var(--border);
-      font-size: 20px;
+      font-size: 15px;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -295,7 +295,7 @@
       flex-shrink: 0;
     }
     #student-panel .sid {
-      font-size: clamp(13px, 1.3vw, 15px);
+      font-size: clamp(10px, 1.3vw, 14px);
       color: var(--text-muted);
       font-variant-numeric: tabular-nums;
       font-weight: 600;
@@ -315,7 +315,7 @@
     }
     #student-panel .scan-time {
       color: var(--text-muted);
-      font-size: clamp(13px, 2.4vw, 15px);
+      font-size: clamp(18px, 2.4vw, 24px);
       font-weight: 800;
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
@@ -491,6 +491,155 @@
       line-height: 1.5;
     }
     .modal-card .btn { width: 100%; padding: 14px; font-size: 15px; }
+
+    /* 학생 상세 이력 모달 (#34495e 테두리 3px, 큰 글자) */
+    #student-detail-modal .student-detail-card {
+      background: var(--bg-elevated);
+      border: 3px solid #34495e;
+      border-radius: 20px;
+      max-width: min(520px, 100%);
+      width: 100%;
+      max-height: min(92dvh, 92vh);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      text-align: center;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+    }
+    #student-detail-modal .student-detail-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 10px 10px 0;
+      flex-shrink: 0;
+    }
+    #student-detail-modal .student-detail-close {
+      background: var(--surface);
+      border: 2px solid #34495e;
+      color: var(--text);
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #student-detail-modal .student-detail-close:hover {
+      background: var(--surface-2);
+    }
+    #student-detail-modal .student-detail-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0 22px 22px;
+      gap: 16px;
+    }
+    #student-detail-modal .student-detail-photo-wrap {
+      width: 100%;
+      max-height: min(38dvh, 320px);
+      flex-shrink: 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 3px solid #34495e;
+      background: var(--surface);
+      margin: 0 auto;
+    }
+    #student-detail-modal .student-detail-photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      max-height: min(38dvh, 320px);
+      object-fit: cover;
+      object-position: center top;
+    }
+    #student-detail-modal .student-detail-title {
+      font-size: clamp(22px, 4.2vw, 30px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+    #student-detail-modal .student-detail-title .sid {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(18px, 3.4vw, 24px);
+      font-weight: 700;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    #student-detail-modal .student-detail-count-wrap {
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 3px solid #34495e;
+      background: var(--surface);
+    }
+    #student-detail-modal .student-detail-count-label {
+      font-size: clamp(16px, 2.8vw, 20px);
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    #student-detail-modal .student-detail-count {
+      font-size: clamp(36px, 8vw, 56px);
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    #student-detail-modal .student-detail-list-head {
+      font-size: clamp(17px, 3vw, 22px);
+      font-weight: 800;
+      text-align: left;
+      color: var(--text);
+    }
+    #student-detail-modal .student-detail-list {
+      flex: 1;
+      min-height: 120px;
+      max-height: min(32dvh, 280px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 3px solid #34495e;
+      border-radius: 14px;
+      background: var(--surface);
+      text-align: left;
+    }
+    #student-detail-modal .student-detail-list-item {
+      padding: 14px 18px;
+      font-size: clamp(17px, 2.8vw, 22px);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    #student-detail-modal .student-detail-list-item:last-child {
+      border-bottom: 0;
+    }
+    #student-detail-modal .student-detail-loading,
+    #student-detail-modal .student-detail-error {
+      font-size: clamp(17px, 3vw, 22px);
+      padding: 24px 16px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    #student-detail-modal .student-detail-error {
+      color: var(--danger);
+    }
+    .student-card.student-card--clickable {
+      cursor: pointer;
+      transition: transform 0.12s, border-color 0.12s, background 0.12s;
+    }
+    .student-card.student-card--clickable:hover {
+      border-color: rgba(79, 209, 197, 0.35);
+      background: var(--surface);
+    }
+    .student-card.student-card--clickable:active {
+      transform: scale(0.98);
+    }
   </style>
 </head>
 <body>
@@ -499,7 +648,7 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxhhabpzSWeytmx24eWWcOeNm1VSZqa-OrWDjwxcjjyc3h3WA15y8aOj4gTwpgIIHL_Bw/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyjTJCwF-rXrR9s0dvxNV4DBImFhF7zuYdF8LonwZkRqrC7RdS63619txRvFJEYDuGnFw/exec';
   </script>
 
   <header class="topnav">
@@ -585,6 +734,27 @@
       <h2>카메라 권한이 필요합니다</h2>
       <p>주소창의 카메라 차단 아이콘을 눌러 허용으로 바꾼 뒤 다시 시도해 주세요.</p>
       <button class="btn btn-primary" id="btn-cam-ok">확인</button>
+    </div>
+  </div>
+
+  <!-- 학생 상세 (식사 이력) -->
+  <div class="modal" id="student-detail-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="student-detail-card" id="student-detail-card" role="document">
+      <div class="student-detail-head">
+        <button type="button" class="student-detail-close" id="btn-student-detail-close" aria-label="닫기">×</button>
+      </div>
+      <div class="student-detail-body">
+        <div class="student-detail-photo-wrap">
+          <img class="student-detail-photo" id="student-detail-photo" src="" alt="" />
+        </div>
+        <div class="student-detail-title" id="student-detail-title"></div>
+        <div class="student-detail-count-wrap">
+          <div class="student-detail-count-label">총 식사 횟수</div>
+          <div class="student-detail-count" id="student-detail-count">-</div>
+        </div>
+        <div class="student-detail-list-head">식사 기록</div>
+        <div class="student-detail-list" id="student-detail-list"></div>
+      </div>
     </div>
   </div>
 
@@ -775,6 +945,95 @@
     closeModal('cam-modal');
   });
 
+  /* ---------- 학생 상세 (식사 이력) 모달 ---------- */
+  var studentDetailModal = document.getElementById('student-detail-modal');
+  var studentDetailPhoto = document.getElementById('student-detail-photo');
+  var studentDetailTitle = document.getElementById('student-detail-title');
+  var studentDetailCount = document.getElementById('student-detail-count');
+  var studentDetailList = document.getElementById('student-detail-list');
+
+  function openStudentDetailModal(ctx) {
+    ctx = ctx || {};
+    var sid = String(ctx.studentId || '').trim();
+    if (!sid) return;
+    var nm = String(ctx.name || '').trim() || '이름 없음';
+    var photo = ctx.photoUrl ? ensurePhotoLarge(ctx.photoUrl) : fallbackPhoto();
+    studentDetailPhoto.src = photo;
+    studentDetailPhoto.onerror = function () {
+      studentDetailPhoto.onerror = null;
+      studentDetailPhoto.src = fallbackPhoto();
+    };
+    studentDetailTitle.innerHTML = escapeHtml(nm) + '<span class="sid">(' + escapeHtml(sid) + ')</span>';
+    studentDetailCount.textContent = '…';
+    studentDetailList.innerHTML = '<div class="student-detail-loading">불러오는 중…</div>';
+    studentDetailModal.classList.add('is-open');
+    studentDetailModal.setAttribute('aria-hidden', 'false');
+
+    api('getStudentHistory', { studentId: sid })
+        .then(function (res) {
+          if (!res || !res.ok) {
+            studentDetailCount.textContent = '-';
+            studentDetailList.innerHTML = '<div class="student-detail-error">'
+                + escapeHtml((res && res.error) || '이력을 불러올 수 없습니다.') + '</div>';
+            return;
+          }
+          var total = res.totalCount != null ? res.totalCount : (res.records && res.records.length) || 0;
+          studentDetailCount.textContent = String(total);
+          var recs = res.records || [];
+          if (!recs.length) {
+            studentDetailList.innerHTML = '<div class="student-detail-loading">기록된 식사가 없습니다.</div>';
+            return;
+          }
+          studentDetailList.innerHTML = recs.map(function (r) {
+            return '<div class="student-detail-list-item">' + escapeHtml(r.time || '-') + '</div>';
+          }).join('');
+        })
+        .catch(function (err) {
+          studentDetailCount.textContent = '-';
+          studentDetailList.innerHTML = '<div class="student-detail-error">'
+              + escapeHtml(err && err.message ? err.message : '서버 오류') + '</div>';
+        });
+  }
+
+  function closeStudentDetailModal() {
+    studentDetailModal.classList.remove('is-open');
+    studentDetailModal.setAttribute('aria-hidden', 'true');
+    studentDetailPhoto.src = '';
+    studentDetailList.innerHTML = '';
+  }
+
+  document.getElementById('btn-student-detail-close').addEventListener('click', closeStudentDetailModal);
+  studentDetailModal.addEventListener('click', function (e) {
+    if (e.target === studentDetailModal) closeStudentDetailModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && studentDetailModal.classList.contains('is-open')) {
+      closeStudentDetailModal();
+    }
+  });
+
+  function onStudentCardActivate(ev) {
+    if (ev.type === 'keydown' && ev.key !== 'Enter' && ev.key !== ' ') return;
+    var card = ev.target.closest('.student-card--clickable');
+    if (!card || !this.contains(card)) return;
+    if (ev.type === 'keydown') ev.preventDefault();
+    var id = String(card.getAttribute('data-student-id') || '').trim();
+    if (!id) return;
+    var name = card.getAttribute('data-student-name') || '';
+    var photo = card.getAttribute('data-photo') || '';
+    openStudentDetailModal({ studentId: id, name: name, photoUrl: photo });
+  }
+  var logListEl = document.getElementById('log-list');
+  var stuListEl = document.getElementById('stu-list');
+  if (logListEl) {
+    logListEl.addEventListener('click', onStudentCardActivate);
+    logListEl.addEventListener('keydown', onStudentCardActivate);
+  }
+  if (stuListEl) {
+    stuListEl.addEventListener('click', onStudentCardActivate);
+    stuListEl.addEventListener('keydown', onStudentCardActivate);
+  }
+
   /* ---------- 스캔 처리 ---------- */
   function onScanSuccess(decodedText) {
     if (awaitingAck || scanCooldown) return;
@@ -919,7 +1178,10 @@
       var html = res.entries.map(function (e) {
         var photo = e.photoUrl ? ensurePhotoLarge(e.photoUrl) : fallbackPhoto();
         var time = (e.time || '').slice(11, 19);
-        return '<div class="student-card">'
+        return '<div class="student-card student-card--clickable" role="button" tabindex="0" '
+             + 'data-student-id="' + escapeHtml(e.studentId || '') + '" '
+             + 'data-student-name="' + escapeHtml(e.name || '') + '" '
+             + 'data-photo="' + escapeHtml(photo) + '">'
              + '<img src="' + escapeHtml(photo) + '" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
              + '<div class="nm">' + escapeHtml(e.name || '-') + '</div>'
              + '<div class="meta">' + escapeHtml(e.studentId || '') + '</div>'
@@ -962,7 +1224,10 @@
     }
     listEl.innerHTML = filtered.map(function (s) {
       var photo = s.photoUrl ? ensurePhotoLarge(s.photoUrl) : fallbackPhoto();
-      return '<div class="student-card">'
+      return '<div class="student-card student-card--clickable" role="button" tabindex="0" '
+           + 'data-student-id="' + escapeHtml(s.studentId || '') + '" '
+           + 'data-student-name="' + escapeHtml(s.name || '') + '" '
+           + 'data-photo="' + escapeHtml(photo) + '">'
            + '<img src="' + escapeHtml(photo) + '" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
            + '<div class="nm">' + escapeHtml(s.name || '-') + '</div>'
            + '<div class="meta">' + escapeHtml(s.studentId || '') + '</div>'
