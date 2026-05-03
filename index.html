@@ -492,7 +492,7 @@
     }
     .modal-card .btn { width: 100%; padding: 14px; font-size: 15px; }
 
-    /* 학생 상세 이력 모달 (#34495e 테두리 3px, 큰 글자) */
+    /* 학생 상세 이력 모달 (#34495e 테두리 3px) */
     #student-detail-modal .student-detail-card {
       background: var(--bg-elevated);
       border: 3px solid #34495e;
@@ -502,15 +502,17 @@
       max-height: min(92dvh, 92vh);
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      text-align: center;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      text-align: left;
       box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
     }
     #student-detail-modal .student-detail-head {
       display: flex;
       align-items: flex-start;
       justify-content: flex-end;
-      padding: 10px 10px 0;
+      padding: 8px 8px 0;
       flex-shrink: 0;
     }
     #student-detail-modal .student-detail-close {
@@ -533,59 +535,76 @@
       background: var(--surface-2);
     }
     #student-detail-modal .student-detail-body {
-      flex: 1;
-      min-height: 0;
       display: flex;
       flex-direction: column;
-      padding: 0 22px 22px;
-      gap: 16px;
+      padding: 0 16px 16px;
+      gap: 12px;
+    }
+    /* 상단: 사진(원) + 이름·총 식사 횟수 */
+    #student-detail-modal .student-detail-profile-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+      min-width: 0;
     }
     #student-detail-modal .student-detail-photo-wrap {
-      width: 100%;
-      height: min(38dvh, 320px);
-      min-height: 160px;
+      width: 120px;
+      height: 120px;
       flex-shrink: 0;
-      border-radius: 16px;
+      border-radius: 50%;
       overflow: hidden;
-      border: 3px solid #34495e;
+      border: 2px solid rgba(255, 255, 255, 0.28);
       background: var(--surface);
-      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
+      box-shadow:
+        0 0 0 1px rgba(52, 73, 94, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+        0 4px 14px rgba(0, 0, 0, 0.22);
     }
     #student-detail-modal .student-detail-photo {
       display: block;
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      object-fit: contain;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
       object-position: center;
     }
+    #student-detail-modal .student-detail-profile-meta {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 8px;
+      text-align: left;
+    }
     #student-detail-modal .student-detail-title {
-      font-size: clamp(20px, 2.6vw, 22px);
+      font-size: clamp(17px, 2.3vw, 19px);
       font-weight: 700;
       letter-spacing: -0.02em;
-      line-height: 1.35;
+      line-height: 1.3;
       color: var(--text);
       font-variant-numeric: tabular-nums;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    #student-detail-modal .student-detail-count-wrap {
-      padding: 14px 18px;
-      border-radius: 16px;
-      border: 3px solid #34495e;
-      background: var(--surface);
-    }
-    #student-detail-modal .student-detail-count-row {
+    #student-detail-modal .student-detail-meals-summary {
       display: flex;
       flex-direction: row;
+      flex-wrap: wrap;
       align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
+      gap: 0 4px;
+      line-height: 1.3;
     }
-    /* 섹션 소제목: "총 식사 횟수" / "식사 기록" 공통 */
+    /* "총 식사 횟수:" / "식사 기록" 공통 (크기·색·굵기 동일) */
     #student-detail-modal .student-detail-section-label {
       font-size: clamp(16px, 2.8vw, 20px);
       font-weight: 700;
@@ -593,37 +612,32 @@
       text-align: left;
       line-height: 1.3;
     }
-    #student-detail-modal .student-detail-count-row .student-detail-section-label {
-      flex-shrink: 0;
-    }
     #student-detail-modal .student-detail-count {
       font-size: clamp(17px, 2.5vw, 20px);
       font-weight: 700;
       color: var(--text);
       line-height: 1.3;
       font-variant-numeric: tabular-nums;
-      text-align: right;
+      text-align: left;
       flex-shrink: 0;
     }
     #student-detail-modal .student-detail-list-head {
-      margin: 0;
+      margin: 4px 0 0;
     }
     #student-detail-modal .student-detail-list {
-      flex: 1;
-      min-height: 120px;
-      max-height: min(32dvh, 280px);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
       border: 3px solid #34495e;
       border-radius: 14px;
       background: var(--surface);
       text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
     #student-detail-modal .student-detail-list-item {
-      padding: 11px 16px;
+      padding: 12px 16px;
       font-size: clamp(15px, 2.2vw, 17px);
       font-weight: 600;
-      line-height: 1.45;
+      line-height: 1.5;
       font-variant-numeric: tabular-nums;
       border-bottom: 1px solid var(--border);
       color: var(--text);
@@ -756,14 +770,15 @@
         <button type="button" class="student-detail-close" id="btn-student-detail-close" aria-label="닫기">×</button>
       </div>
       <div class="student-detail-body">
-        <div class="student-detail-photo-wrap">
-          <img class="student-detail-photo" id="student-detail-photo" src="" alt="" />
-        </div>
-        <div class="student-detail-title" id="student-detail-title"></div>
-        <div class="student-detail-count-wrap">
-          <div class="student-detail-count-row">
-            <span class="student-detail-section-label">총 식사 횟수</span>
-            <span class="student-detail-count" id="student-detail-count">-</span>
+        <div class="student-detail-profile-row">
+          <div class="student-detail-photo-wrap">
+            <img class="student-detail-photo" id="student-detail-photo" src="" alt="" />
+          </div>
+          <div class="student-detail-profile-meta">
+            <div class="student-detail-title" id="student-detail-title"></div>
+            <div class="student-detail-meals-summary">
+              <span class="student-detail-section-label">총 식사 횟수: </span><span class="student-detail-count" id="student-detail-count">-</span>
+            </div>
           </div>
         </div>
         <div class="student-detail-section-label student-detail-list-head">식사 기록</div>
@@ -1006,7 +1021,7 @@
             return;
           }
           var total = res.totalCount != null ? res.totalCount : (res.records && res.records.length) || 0;
-          studentDetailCount.textContent = String(total);
+          studentDetailCount.textContent = String(total) + '회';
           var recs = res.records || [];
           if (!recs.length) {
             studentDetailList.innerHTML = '<div class="student-detail-loading">기록된 식사가 없습니다.</div>';
