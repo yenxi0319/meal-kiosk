@@ -58,14 +58,7 @@
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .brand .dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 14px var(--accent);
+      white-space: nowrap;
     }
     .nav-tabs {
       display: flex;
@@ -102,13 +95,15 @@
     /* ----------------- QR 스캔 화면 ----------------- */
     .qr-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
       gap: 24px;
-      max-width: 1400px;
+      align-items: stretch;
+      max-width: 1480px;
       margin: 0 auto;
+      min-height: calc(100vh - var(--nav-h) - 120px);
     }
     @media (max-width: 900px) {
-      .qr-grid { grid-template-columns: 1fr; }
+      .qr-grid { grid-template-columns: 1fr; min-height: auto; }
     }
 
     .panel {
@@ -137,10 +132,11 @@
     }
     .panel-body { padding: 18px 22px; }
 
-    /* 카메라 영역 */
+    /* 카메라 영역 (QR 스캐너 메인) */
     #qr-reader {
       width: 100%;
-      aspect-ratio: 1 / 1;
+      min-height: min(62vh, 640px);
+      aspect-ratio: 4 / 3;
       background: #000;
       border-radius: 12px;
       overflow: hidden;
@@ -173,32 +169,38 @@
 
     /* 학생 정보 패널 */
     #student-panel {
-      min-height: 360px;
+      min-height: min(62vh, 640px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      gap: 18px;
+      gap: 22px;
+      padding: 12px 8px;
     }
-    #student-panel.empty { color: var(--text-muted); font-size: 15px; }
+    #student-panel.empty { color: var(--text-muted); font-size: 15px; min-height: 280px; }
     #student-panel .photo {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
+      width: min(92%, 420px);
+      height: min(92%, 420px);
+      max-width: 100%;
+      aspect-ratio: 1;
+      border-radius: 20px;
       object-fit: cover;
       background: var(--surface);
       border: 4px solid var(--accent-dim);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
     }
     #student-panel .name {
-      font-size: 30px;
+      font-size: clamp(28px, 4.2vw, 40px);
       font-weight: 800;
       letter-spacing: -0.02em;
+      line-height: 1.2;
     }
     #student-panel .sid {
-      font-size: 17px;
+      font-size: clamp(18px, 2.2vw, 24px);
       color: var(--text-muted);
       font-variant-numeric: tabular-nums;
+      font-weight: 600;
     }
     #student-panel .greet {
       margin-top: 6px;
@@ -391,15 +393,15 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxhhabpzSWeytmx24eWWcOeNm1VSZqa-OrWDjwxcjjyc3h3WA15y8aOj4gTwpgIIHL_Bw/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyFdtXe20WfjlNff6OXoO8f2to7qJe-eUzN_naTo5OKhOM2VBpkI77Hlfpd1Ja7u7jL4w/exec';
   </script>
 
   <header class="topnav">
-    <div class="brand"><span class="dot"></span>방과후 급식관리</div>
-    <nav class="nav-tabs">
-      <button class="nav-btn active" data-view="qr">QR 스캔</button>
-      <button class="nav-btn" data-view="log">식사현황</button>
-      <button class="nav-btn" data-view="students">학생정보</button>
+    <div class="brand">● 방과후 급식관리</div>
+    <nav class="nav-tabs" aria-label="주 메뉴">
+      <button type="button" class="nav-btn active" data-view="qr">QR 스캔</button>
+      <button type="button" class="nav-btn" data-view="log">식사현황</button>
+      <button type="button" class="nav-btn" data-view="students">학생정보</button>
     </nav>
     <div class="clock" id="clock"></div>
   </header>
@@ -561,11 +563,16 @@
       + '<rect x="50" y="120" width="100" height="60" rx="30" fill="#4fd1c5" opacity="0.5"/>'
       + '</svg>');
   }
+  function ensurePhotoLarge(url) {
+    if (!url) return '';
+    return String(url).replace(/([?&])sz=w\d+/i, '$1sz=w1000');
+  }
   function renderStudentPanel(student, opts) {
     opts = opts || {};
     var panel = document.getElementById('student-panel');
     panel.classList.remove('empty');
-    var photo = student && student.photoUrl ? student.photoUrl : fallbackPhoto();
+    var rawPhoto = student && student.photoUrl ? student.photoUrl : '';
+    var photo = rawPhoto ? ensurePhotoLarge(rawPhoto) : fallbackPhoto();
     var html = ''
       + '<img class="photo" src="' + escapeHtml(photo) + '" '
       + 'onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="" />'
@@ -660,7 +667,7 @@
         });
   }
 
-  /* ---------- 카메라 ---------- */
+  /* ---------- 카메라 (전면 facingMode: user 고정 우선) ---------- */
   function startQr() {
     if (qrRunning) return;
     if (typeof Html5Qrcode === 'undefined') {
@@ -680,43 +687,49 @@
       aspectRatio: 1.0
     };
 
-    Html5Qrcode.getCameras().then(function (devices) {
-      if (!devices || !devices.length) {
-        throw new Error('사용 가능한 카메라가 없습니다.');
-      }
-      var preferred = pickCamera(devices);
-      return html5QrCode.start(preferred, config, onScanSuccess, function () {});
-    }).then(function () {
+    function onCamError() {}
+
+    function markRunning() {
       qrRunning = true;
       setStatus('스캔 중', 'ok');
-    }).catch(function (e) {
+    }
+
+    function handleCamFail(e) {
       qrRunning = false;
       var msg = (e && e.message) ? e.message : '카메라를 열 수 없습니다.';
       setStatus(msg, 'err');
-      // 권한 거부면 안내 모달
       var n = (e && e.name) || '';
       if (n === 'NotAllowedError' || /permission/i.test(msg)) {
         openModal('cam-modal');
       }
-      // facingMode로 한 번 더 시도
-      try {
-        html5QrCode.start({ facingMode: 'environment' }, config, onScanSuccess, function () {})
-            .then(function () { qrRunning = true; setStatus('스캔 중', 'ok'); })
-            .catch(function () {
-              return html5QrCode.start({ facingMode: 'user' }, config, onScanSuccess, function () {});
-            })
-            .then(function () { qrRunning = true; setStatus('스캔 중', 'ok'); })
-            .catch(function () {});
-      } catch (_) {}
-    });
+    }
+
+    html5QrCode
+        .start({ facingMode: { exact: 'user' } }, config, onScanSuccess, onCamError)
+        .catch(function () {
+          return html5QrCode.start({ facingMode: 'user' }, config, onScanSuccess, onCamError);
+        })
+        .catch(function () {
+          return Html5Qrcode.getCameras().then(function (devices) {
+            if (!devices || !devices.length) {
+              throw new Error('사용 가능한 카메라가 없습니다.');
+            }
+            var frontId = pickFrontCameraId(devices);
+            if (!frontId) throw new Error('전면 카메라를 찾을 수 없습니다.');
+            return html5QrCode.start(frontId, config, onScanSuccess, onCamError);
+          });
+        })
+        .then(markRunning)
+        .catch(handleCamFail);
   }
 
-  function pickCamera(devices) {
-    var re = /back|rear|environment|wide|후면|외장/i;
+  /** 라벨 기준 전면 카메라 deviceId (facingMode 실패 시 보조) */
+  function pickFrontCameraId(devices) {
+    var re = /front|user|face|selfie|전면|셀카|내장|facetime/i;
     for (var i = 0; i < devices.length; i++) {
       if (re.test(String(devices[i].label || ''))) return devices[i].id;
     }
-    return devices[devices.length - 1].id;
+    return devices.length ? devices[0].id : null;
   }
 
   function stopQr() {
@@ -748,7 +761,7 @@
         return;
       }
       var html = res.entries.map(function (e) {
-        var photo = e.photoUrl || fallbackPhoto();
+        var photo = e.photoUrl ? ensurePhotoLarge(e.photoUrl) : fallbackPhoto();
         var time = (e.time || '').slice(11, 19);
         return '<div class="student-card">'
              + '<img src="' + escapeHtml(photo) + '" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
@@ -792,7 +805,7 @@
       return;
     }
     listEl.innerHTML = filtered.map(function (s) {
-      var photo = s.photoUrl || fallbackPhoto();
+      var photo = s.photoUrl ? ensurePhotoLarge(s.photoUrl) : fallbackPhoto();
       return '<div class="student-card">'
            + '<img src="' + escapeHtml(photo) + '" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
            + '<div class="nm">' + escapeHtml(s.name || '-') + '</div>'
