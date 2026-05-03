@@ -24,16 +24,19 @@
       --success: #34d399;
       --warning: #fbbf24;
       --danger: #f87171;
-      --nav-h: 76px;
+      --nav-h: 62px;
       --radius: 16px;
-      --qr-neon: #00f3ff;
-      --qr-neon-glow: rgba(0, 243, 255, 0.35);
+      --qr-panel-border: #3f3f46;
+      --qr-panel-shadow: 0 10px 32px rgba(0, 0, 0, 0.38);
     }
 
     * { box-sizing: border-box; }
 
     html {
-      height: 100%;
+      height: 100vh;
+      height: 100dvh;
+      max-height: 100vh;
+      max-height: 100dvh;
       overflow: hidden;
       overscroll-behavior: none;
     }
@@ -48,7 +51,8 @@
     }
 
     body {
-      height: 100%;
+      height: 100vh;
+      height: 100dvh;
       max-height: 100vh;
       max-height: 100dvh;
       overflow: hidden;
@@ -61,16 +65,17 @@
     .topnav {
       flex-shrink: 0;
       height: var(--nav-h);
+      min-height: var(--nav-h);
       background: var(--bg-elevated);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      padding: 0 28px;
+      padding: 0 16px;
       z-index: 50;
-      gap: 24px;
+      gap: 14px;
     }
     .brand {
-      font-size: 20px;
+      font-size: 17px;
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--text);
@@ -85,9 +90,9 @@
       background: transparent;
       border: 0;
       color: var(--text-muted);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
-      padding: 12px 18px;
+      padding: 8px 12px;
       border-radius: 12px;
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
@@ -108,7 +113,7 @@
       flex: 1 1 auto;
       min-height: 0;
       overflow: hidden;
-      padding: 10px 14px 12px;
+      padding: 6px 8px 8px;
       display: flex;
       flex-direction: column;
     }
@@ -131,8 +136,8 @@
       flex: 1;
       min-height: 0;
       display: grid;
-      grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
-      gap: 12px;
+      grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+      gap: 14px;
       align-items: stretch;
       max-width: 1480px;
       width: 100%;
@@ -142,7 +147,8 @@
     @media (max-width: 900px) {
       .view[data-view="qr"] .qr-grid {
         grid-template-columns: 1fr;
-        grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1.02fr) minmax(0, 0.98fr);
+        gap: 12px;
       }
     }
 
@@ -156,10 +162,16 @@
       display: flex;
       flex-direction: column;
       min-height: 0;
-      border: 3px solid var(--qr-neon);
-      box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.35),
-        0 0 24px var(--qr-neon-glow);
+      border: 1px solid var(--qr-panel-border);
+      box-shadow: var(--qr-panel-shadow);
+    }
+    .view[data-view="qr"] .panel-head {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .view[data-view="qr"] .panel-head .pill {
+      font-size: 11px;
+      padding: 2px 8px;
     }
     .panel-head {
       padding: 12px 16px;
@@ -184,7 +196,7 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      padding: 10px 12px 12px;
+      padding: 8px 10px 10px;
     }
 
     /* 카메라 영역 (QR 스캐너 메인) */
@@ -204,11 +216,16 @@
 
     .qr-controls {
       display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: nowrap;
       flex-shrink: 0;
       align-items: center;
+    }
+    .view[data-view="qr"] .qr-controls .btn {
+      padding: 8px 12px;
+      font-size: 13px;
+      border-radius: 8px;
     }
     .qr-status {
       display: inline-flex;
@@ -234,58 +251,64 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      gap: clamp(4px, 1vh, 10px);
-      padding: 6px 4px;
+      gap: 4px;
+      padding: 6px 10px;
       overflow: hidden;
     }
     #student-panel.empty {
       color: var(--text-muted);
-      font-size: clamp(13px, 1.6vw, 15px);
+      font-size: clamp(11px, 1.4vw, 13px);
+      line-height: 1.35;
       justify-content: center;
+      padding: 8px 12px;
     }
     #student-panel .photo {
-      flex-shrink: 0;
-      width: min(92%, min(36vh, 220px));
+      flex-shrink: 1;
+      flex-grow: 0;
+      width: min(90%, min(22vh, 150px));
       max-width: 100%;
-      max-height: min(36vh, 220px);
+      max-height: min(22vh, 150px);
       aspect-ratio: 1;
       height: auto;
-      border-radius: 14px;
+      border-radius: 10px;
       object-fit: cover;
       background: var(--surface);
-      border: 3px solid rgba(255, 255, 255, 0.5);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+      border: 2px solid rgba(255, 255, 255, 0.45);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     }
     #student-panel .name {
-      font-size: clamp(18px, 2.6vw, 28px);
+      font-size: clamp(14px, 2.1vw, 20px);
       font-weight: 800;
       letter-spacing: -0.02em;
-      line-height: 1.15;
+      line-height: 1.12;
       flex-shrink: 0;
     }
     #student-panel .sid {
-      font-size: clamp(14px, 1.8vw, 20px);
+      font-size: clamp(11px, 1.45vw, 15px);
       color: var(--text-muted);
       font-variant-numeric: tabular-nums;
       font-weight: 600;
       flex-shrink: 0;
+      line-height: 1.1;
     }
     #student-panel .greet {
-      margin-top: 2px;
-      padding: 8px 16px;
+      margin-top: 1px;
+      padding: 4px 10px;
       background: rgba(52, 211, 153, 0.18);
       color: var(--success);
       border-radius: 999px;
-      font-size: clamp(13px, 1.7vw, 16px);
+      font-size: clamp(10px, 1.35vw, 13px);
       font-weight: 700;
       flex-shrink: 0;
+      line-height: 1.2;
     }
     #student-panel .scan-time {
       color: var(--text-muted);
-      font-size: clamp(11px, 1.3vw, 12px);
+      font-size: 10px;
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
-      margin-top: 2px;
+      margin-top: 1px;
+      line-height: 1.1;
     }
 
     /* ----------------- 버튼 ----------------- */
@@ -464,7 +487,7 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzVgW4OkU6J_ZxYsjS8Js1_u88MvGOV3haomp0wpel93ELXf-f_9n7sS5aUceH_Iegj8A/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbydEdmD6j0U46VRhou5Dnm3RQFEfAB0y1bQ77I4RWtiuUTAeNveZzRU9ZurQPCE0a2nQw/exec';
   </script>
 
   <header class="topnav">
@@ -566,7 +589,7 @@
   var studentsCache = null;
   var scanBeepAudioCtx = null;
 
-  /** QR 인식 성공 시 — AudioContext로 짧고 큰 비프음 */
+  /** QR 인식 성공 시 — Web Audio: 매우 큰 비프(스퀘어 + 밴드 + 컴프) */
   function playScanSuccessBeep() {
     try {
       var AC = window.AudioContext || window.webkitAudioContext;
@@ -576,11 +599,20 @@
       if (ctx.state === 'suspended') ctx.resume();
 
       var t0 = ctx.currentTime;
-      var dur = 0.14;
+      var dur = 0.22;
       var master = ctx.createGain();
-      master.connect(ctx.destination);
+      var comp = ctx.createDynamicsCompressor();
+      comp.threshold.setValueAtTime(-28, t0);
+      comp.knee.setValueAtTime(18, t0);
+      comp.ratio.setValueAtTime(14, t0);
+      comp.attack.setValueAtTime(0.002, t0);
+      comp.release.setValueAtTime(0.12, t0);
+      master.connect(comp);
+      comp.connect(ctx.destination);
+
       master.gain.setValueAtTime(0.0001, t0);
-      master.gain.exponentialRampToValueAtTime(0.92, t0 + 0.01);
+      master.gain.exponentialRampToValueAtTime(1, t0 + 0.008);
+      master.gain.setValueAtTime(1, t0 + dur * 0.55);
       master.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
 
       function addOsc(freq, detune, type, vol) {
@@ -595,9 +627,10 @@
         o.start(t0);
         o.stop(t0 + dur);
       }
-      addOsc(880, 0, 'square', 0.45);
-      addOsc(1320, 0, 'square', 0.35);
-      addOsc(1760, 0, 'sawtooth', 0.12);
+      addOsc(523.25, 0, 'square', 0.55);
+      addOsc(1046.5, 0, 'square', 0.52);
+      addOsc(1568, 0, 'square', 0.38);
+      addOsc(2093, 0, 'sawtooth', 0.14);
     } catch (e) { /* ignore */ }
   }
 
