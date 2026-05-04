@@ -198,6 +198,26 @@
       flex-direction: column;
       padding: 6px 8px 8px;
     }
+    .view[data-view="qr"] .panel-right .panel-body {
+      position: relative;
+      padding: 6px 8px 54px;
+    }
+    .view[data-view="qr"] .panel-right #btn-student-reset {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 2;
+      padding: 8px 12px;
+      font-size: 13px;
+      border-radius: 8px;
+      border: 1px solid #34495e;
+      background: transparent;
+      color: var(--text);
+    }
+    .view[data-view="qr"] .panel-right #btn-student-reset:hover {
+      background: var(--surface-2);
+      border-color: #3d5666;
+    }
 
     /* 카메라 영역 (QR 스캐너 메인) */
     #qr-reader {
@@ -252,7 +272,7 @@
       justify-content: flex-start;
       text-align: center;
       gap: 5px;
-      padding: 4px 8px 6px;
+      padding: 4px 8px 4px;
       overflow: hidden;
     }
     #student-panel.empty {
@@ -260,7 +280,7 @@
       font-size: clamp(11px, 1.4vw, 13px);
       line-height: 1.35;
       justify-content: center;
-      padding: 8px 12px;
+      padding: 8px 14px 10px;
     }
     /* 고정 정사각형 프레임: 원본 비율과 무관하게 동일 크기·cover로 표시 */
     #student-panel .photo-frame {
@@ -706,10 +726,11 @@
           </div>
         </div>
 
-        <div class="panel">
+        <div class="panel panel-right">
           <div class="panel-head">학생 정보</div>
           <div class="panel-body">
             <div id="student-panel" class="empty">QR 코드를 카메라에 비추면 정보가 표시됩니다.</div>
+            <button type="button" class="btn btn-ghost" id="btn-student-reset" aria-label="학생 정보 초기화">정보 초기화</button>
           </div>
         </div>
       </div>
@@ -1336,6 +1357,9 @@
 
   document.getElementById('btn-qr-start').addEventListener('click', startQr);
   document.getElementById('btn-qr-stop').addEventListener('click', stopQr);
+  document.getElementById('btn-student-reset').addEventListener('click', function () {
+    clearStudentPanel();
+  });
 
   /* ---------- 식사현황 ---------- */
   function loadTodayLog() {
