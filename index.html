@@ -133,14 +133,33 @@
     /* 학생정보 탭: 상단 대시보드 + 중단 검색 + 하단 리스트(스크롤) */
     .view[data-view="students"] {
       overflow: hidden;
-      gap: 12px;
-      padding: 10px 10px 8px;
+      gap: 6px;
+      padding: 6px 8px 4px;
     }
     .view[data-view="students"] .stu-list-wrap {
       flex: 1;
       min-height: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+    }
+    .view[data-view="students"] .toolbar {
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+    .view[data-view="students"] .toolbar input {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .view[data-view="students"] .toolbar .btn {
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+    .view[data-view="students"] #stu-list.grid {
+      grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+      gap: 10px;
+    }
+    .view[data-view="students"] .stu-list-wrap .empty-state {
+      padding: 28px 12px;
     }
 
     /* ----------------- QR 스캔 화면 ----------------- */
@@ -476,15 +495,16 @@
     }
     .toolbar input:focus { outline: none; border-color: var(--accent); }
 
-    /* 학생정보 — 방과후 신청 집계 대시보드 */
+    /* 학생정보 — 방과후 신청 집계 대시보드 (슬림: 탭에서 목록 영역 확보) */
     .stu-dashboard {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 16px;
+      gap: 10px;
       flex-shrink: 0;
       flex-wrap: wrap;
+      min-height: 0;
     }
     .stu-dashboard-main {
       flex: 1 1 360px;
@@ -492,24 +512,25 @@
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 12px 14px 14px;
+      padding: 7px 9px 8px;
     }
     .stu-grade-block + .stu-grade-block {
-      margin-top: 12px;
-      padding-top: 12px;
+      margin-top: 5px;
+      padding-top: 5px;
       border-top: 1px solid var(--border);
     }
     .stu-grade-label {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--accent);
       letter-spacing: -0.02em;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
+      line-height: 1.15;
     }
     .stu-class-grid {
       display: grid;
       grid-template-columns: repeat(10, minmax(0, 1fr));
-      gap: 5px;
+      gap: 3px;
     }
     @media (max-width: 720px) {
       .stu-class-grid {
@@ -519,59 +540,73 @@
     .stu-class-cell {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 6px 2px 7px;
+      border-radius: 7px;
+      padding: 3px 1px 4px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2px;
+      gap: 0;
       min-width: 0;
     }
     .stu-class-cell.is-zero {
       opacity: 0.4;
     }
     .stu-class-cell .stu-class-num {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 600;
       color: var(--text-muted);
-      line-height: 1.1;
+      line-height: 1.05;
     }
     .stu-class-cell .stu-class-count {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       font-variant-numeric: tabular-nums;
       color: var(--text);
-      line-height: 1.1;
+      line-height: 1.05;
     }
     .stu-class-cell.is-zero .stu-class-count {
       color: var(--text-muted);
     }
     .stu-dashboard-total {
       flex: 0 1 220px;
-      min-width: 200px;
+      min-width: 188px;
       background: linear-gradient(145deg, rgba(79, 209, 197, 0.14), var(--bg-elevated));
       border: 1px solid rgba(79, 209, 197, 0.35);
       border-radius: var(--radius);
-      padding: 16px 18px;
+      padding: 10px 12px 12px;
       text-align: right;
-      align-self: stretch;
+      align-self: flex-start;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 6px;
+      justify-content: flex-start;
+      gap: 4px;
     }
-    .stu-total-label {
-      font-size: 13px;
-      font-weight: 700;
+    .stu-total-period-line {
+      font-size: 11px;
+      font-weight: 600;
       color: var(--text-muted);
-      line-height: 1.3;
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      word-break: break-all;
+    }
+    .stu-total-period-line.is-empty {
+      opacity: 0.65;
+    }
+    .stu-total-headline {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      margin-top: 2px;
     }
     .stu-total-value {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 800;
       color: var(--text);
       letter-spacing: -0.02em;
+      margin-top: 2px;
     }
     .stu-total-n {
       font-size: 32px;
@@ -820,7 +855,7 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxrtZ9ulSa_wgbjf6UHZozxUoIcWCmHtPGAq3Mmp9wUu4bJp1aMoVAoRgxZaem7NPR9uQ/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwXUGVuMX0HCbpjbk9RzNfKqUCXSTFRlz4Ly9h9Jf7a7nLT7ezISGjVnkXMVnVvoAi9rA/exec';
   </script>
 
   <header class="topnav">
@@ -955,6 +990,8 @@
   var studentsReady = false;
   /** students API의 mealApplicantStats(없으면 클라이언트에서 재계산) */
   var mealApplicantStatsCache = null;
+  /** StudentList_1 방과후시작·방과후종료 기반 기간(API afterSchoolPeriod, 폴백: 명단 첫 유효 행) */
+  var afterSchoolPeriodCache = { start: '', end: '' };
   var scanBeepAudioCtx = null;
 
   function todayKeySeoul() {
@@ -1038,6 +1075,29 @@
     return { totalApplicants: total, grid: grid };
   }
 
+  function derivePeriodFromStudents_(list) {
+    for (var i = 0; i < (list || []).length; i++) {
+      var s = list[i];
+      if (!s) continue;
+      var ps = String(s.periodStart || '').trim();
+      var pe = String(s.periodEnd || '').trim();
+      if (ps && pe) return { start: ps, end: pe };
+    }
+    return { start: '', end: '' };
+  }
+
+  function syncAfterSchoolPeriodFromApi_(res, list) {
+    if (res && res.afterSchoolPeriod) {
+      var a = String(res.afterSchoolPeriod.start || '').trim();
+      var b = String(res.afterSchoolPeriod.end || '').trim();
+      if (a && b) {
+        afterSchoolPeriodCache = { start: a, end: b };
+        return;
+      }
+    }
+    afterSchoolPeriodCache = derivePeriodFromStudents_(list || []);
+  }
+
   function renderStudentDashboard_(stats) {
     var mount = document.getElementById('stu-dash');
     if (!mount) return;
@@ -1064,8 +1124,17 @@
       html += '</div></div>';
     }
     html += '</div>';
+    var ps = String(afterSchoolPeriodCache.start || '').trim();
+    var pe = String(afterSchoolPeriodCache.end || '').trim();
+    var periodLine;
+    if (ps && pe) {
+      periodLine = '<div class="stu-total-period-line">[' + escapeHtml(ps) + ' ~ ' + escapeHtml(pe) + '] 기간</div>';
+    } else {
+      periodLine = '<div class="stu-total-period-line is-empty">기간 정보 없음</div>';
+    }
     html += '<div class="stu-dashboard-total" role="status">';
-    html += '<div class="stu-total-label">이번 방과후 총 신청 인원</div>';
+    html += periodLine;
+    html += '<div class="stu-total-headline">방과후 총 신청 인원</div>';
     html += '<div class="stu-total-value"><span class="stu-total-n">' + total + '</span>명</div>';
     html += '</div>';
     mount.innerHTML = html;
@@ -1084,10 +1153,12 @@
             studentsReady = true;
             mealApplicantStatsCache = sres.mealApplicantStats
                 || computeMealApplicantStatsClient_(studentsCache);
+            syncAfterSchoolPeriodFromApi_(sres, studentsCache);
           } else {
             studentsCache = studentsCache || [];
             rebuildStudentsById(studentsCache);
             studentsReady = false;
+            afterSchoolPeriodCache = derivePeriodFromStudents_(studentsCache);
           }
           if (lres && lres.ok) applyTodayLogToScanned(lres);
           if (!qrRunning) setStatus('대기 중', '');
@@ -1592,6 +1663,10 @@
       if (!mealApplicantStatsCache && studentsCache && studentsCache.length) {
         mealApplicantStatsCache = computeMealApplicantStatsClient_(studentsCache);
       }
+      if (!(String(afterSchoolPeriodCache.start || '').trim() && String(afterSchoolPeriodCache.end || '').trim())
+          && studentsCache && studentsCache.length) {
+        afterSchoolPeriodCache = derivePeriodFromStudents_(studentsCache);
+      }
       renderStudentDashboard_(mealApplicantStatsCache || computeMealApplicantStatsClient_(studentsCache || []));
       renderStudents(studentsCache || []);
       return;
@@ -1612,6 +1687,7 @@
       rebuildStudentsById(studentsCache);
       studentsReady = true;
       mealApplicantStatsCache = res.mealApplicantStats || computeMealApplicantStatsClient_(studentsCache);
+      syncAfterSchoolPeriodFromApi_(res, studentsCache);
       if (logRes && logRes.ok) applyTodayLogToScanned(logRes);
       renderStudentDashboard_(mealApplicantStatsCache);
       renderStudents(studentsCache);
