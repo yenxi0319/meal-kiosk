@@ -499,7 +499,7 @@
     .stu-dashboard {
       display: flex;
       flex-direction: row;
-      align-items: flex-start;
+      align-items: stretch;
       justify-content: space-between;
       gap: 10px;
       flex-shrink: 0;
@@ -571,16 +571,18 @@
     .stu-dashboard-total {
       flex: 0 1 220px;
       min-width: 188px;
-      background: linear-gradient(145deg, rgba(79, 209, 197, 0.14), var(--bg-elevated));
-      border: 1px solid rgba(79, 209, 197, 0.35);
+      box-sizing: border-box;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 10px 12px 12px;
+      padding: 10px 18px 10px 12px;
       text-align: right;
-      align-self: flex-start;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      gap: 4px;
+      justify-content: center;
+      align-items: stretch;
+      gap: 12px;
+      min-height: 0;
     }
     .stu-total-period-line {
       font-size: 11px;
@@ -589,6 +591,7 @@
       line-height: 1.35;
       letter-spacing: -0.01em;
       word-break: break-all;
+      margin: 0;
     }
     .stu-total-period-line.is-empty {
       opacity: 0.65;
@@ -599,14 +602,14 @@
       color: var(--text);
       line-height: 1.25;
       letter-spacing: -0.03em;
-      margin-top: 2px;
+      margin: 0;
     }
     .stu-total-value {
       font-size: 16px;
       font-weight: 800;
       color: var(--text);
       letter-spacing: -0.02em;
-      margin-top: 2px;
+      margin: 0;
     }
     .stu-total-n {
       font-size: 32px;
