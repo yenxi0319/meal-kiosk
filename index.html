@@ -125,8 +125,20 @@
       overflow: hidden;
     }
     .view.active { display: flex; }
-    .view[data-view="log"],
+    .view[data-view="log"] {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* 학생정보 탭: 상단 대시보드 + 중단 검색 + 하단 리스트(스크롤) */
     .view[data-view="students"] {
+      overflow: hidden;
+      gap: 12px;
+      padding: 10px 10px 8px;
+    }
+    .view[data-view="students"] .stu-list-wrap {
+      flex: 1;
+      min-height: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
@@ -464,6 +476,120 @@
     }
     .toolbar input:focus { outline: none; border-color: var(--accent); }
 
+    /* 학생정보 — 방과후 신청 집계 대시보드 */
+    .stu-dashboard {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .stu-dashboard-main {
+      flex: 1 1 360px;
+      min-width: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px 14px;
+    }
+    .stu-grade-block + .stu-grade-block {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .stu-grade-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .stu-class-grid {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: 5px;
+    }
+    @media (max-width: 720px) {
+      .stu-class-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+    }
+    .stu-class-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 2px 7px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      min-width: 0;
+    }
+    .stu-class-cell.is-zero {
+      opacity: 0.4;
+    }
+    .stu-class-cell .stu-class-num {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.1;
+    }
+    .stu-class-cell .stu-class-count {
+      font-size: 15px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .stu-class-cell.is-zero .stu-class-count {
+      color: var(--text-muted);
+    }
+    .stu-dashboard-total {
+      flex: 0 1 220px;
+      min-width: 200px;
+      background: linear-gradient(145deg, rgba(79, 209, 197, 0.14), var(--bg-elevated));
+      border: 1px solid rgba(79, 209, 197, 0.35);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      text-align: right;
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
+    .stu-total-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+    .stu-total-value {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .stu-total-n {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      margin-right: 4px;
+    }
+    .stu-applicant-pill {
+      margin-top: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(79, 209, 197, 0.18);
+      color: var(--accent);
+    }
+
     /* ----------------- 모달 ----------------- */
     .modal {
       position: fixed;
@@ -694,7 +820,7 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbz2Nu7rEuY6asv309KdtuebQMhcJ73BhVmiPPUAI2B0LyoqHNsWDGbdXLaYSkgW4sG2yg/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxrtZ9ulSa_wgbjf6UHZozxUoIcWCmHtPGAq3Mmp9wUu4bJp1aMoVAoRgxZaem7NPR9uQ/exec';
   </script>
 
   <header class="topnav">
@@ -755,11 +881,14 @@
 
     <!-- ===== 학생정보 ===== -->
     <section class="view" data-view="students">
+      <div id="stu-dash" class="stu-dashboard" aria-label="방과후 식사 신청 집계"></div>
       <div class="toolbar">
-        <input type="text" id="stu-search" placeholder="이름 또는 학번으로 검색" />
+        <input type="search" id="stu-search" placeholder="이름 또는 학번으로 검색 (실시간)" autocomplete="off" />
         <button class="btn" id="btn-stu-refresh">새로고침</button>
       </div>
-      <div id="stu-list" class="grid"></div>
+      <div class="stu-list-wrap">
+        <div id="stu-list" class="grid"></div>
+      </div>
     </section>
 
   </main>
@@ -824,6 +953,8 @@
   /** 오늘 식사한 학번 (프리패치 todayLog + 낙관적 추가) */
   var scannedToday = Object.create(null);
   var studentsReady = false;
+  /** students API의 mealApplicantStats(없으면 클라이언트에서 재계산) */
+  var mealApplicantStatsCache = null;
   var scanBeepAudioCtx = null;
 
   function todayKeySeoul() {
@@ -886,6 +1017,60 @@
     return todayKey >= s && todayKey <= e;
   }
 
+  /** 방과후 시작·종료가 모두 있으면 식사(방과후) 신청자 (GAS computeMealApplicantStats_ 와 동일 규칙) */
+  function isMealApplicantStudent_(s) {
+    if (!s) return false;
+    return !!String(s.periodStart || '').trim() && !!String(s.periodEnd || '').trim();
+  }
+
+  function computeMealApplicantStatsClient_(list) {
+    var grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+    var total = 0;
+    (list || []).forEach(function (st) {
+      if (!isMealApplicantStudent_(st)) return;
+      total++;
+      var digits = String(st.studentId || '').replace(/\D/g, '');
+      if (digits.length !== 9) return;
+      var g = parseInt(digits.charAt(4), 10);
+      var cl = parseInt(digits.substring(5, 7), 10);
+      if (g >= 1 && g <= 3 && cl >= 1 && cl <= 10) grid[g - 1][cl - 1]++;
+    });
+    return { totalApplicants: total, grid: grid };
+  }
+
+  function renderStudentDashboard_(stats) {
+    var mount = document.getElementById('stu-dash');
+    if (!mount) return;
+    var emptyGrid = function () {
+      return [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+    };
+    stats = stats || { totalApplicants: 0, grid: emptyGrid() };
+    var total = stats.totalApplicants != null ? stats.totalApplicants : 0;
+    var grid = stats.grid || emptyGrid();
+    var grades = [1, 2, 3];
+    var html = '<div class="stu-dashboard-main">';
+    for (var gi = 0; gi < 3; gi++) {
+      var row = grid[gi] || [];
+      html += '<div class="stu-grade-block">';
+      html += '<div class="stu-grade-label">' + grades[gi] + '학년 (1~10반)</div>';
+      html += '<div class="stu-class-grid">';
+      for (var ci = 0; ci < 10; ci++) {
+        var n = row[ci] != null ? row[ci] : 0;
+        var zClass = n === 0 ? ' stu-class-cell is-zero' : ' stu-class-cell';
+        html += '<div class="' + zClass.trim() + '">';
+        html += '<span class="stu-class-num">' + (ci + 1) + '반</span>';
+        html += '<span class="stu-class-count">' + n + '</span></div>';
+      }
+      html += '</div></div>';
+    }
+    html += '</div>';
+    html += '<div class="stu-dashboard-total" role="status">';
+    html += '<div class="stu-total-label">이번 방과후 총 신청 인원</div>';
+    html += '<div class="stu-total-value"><span class="stu-total-n">' + total + '</span>명</div>';
+    html += '</div>';
+    mount.innerHTML = html;
+  }
+
   function prefetchScanData() {
     setStatus('명단 불러오는 중…', '');
     studentsReady = false;
@@ -897,6 +1082,8 @@
             studentsCache = sres.students || [];
             rebuildStudentsById(studentsCache);
             studentsReady = true;
+            mealApplicantStatsCache = sres.mealApplicantStats
+                || computeMealApplicantStatsClient_(studentsCache);
           } else {
             studentsCache = studentsCache || [];
             rebuildStudentsById(studentsCache);
@@ -998,7 +1185,7 @@
     });
     if (name !== 'qr') stopQr();
     if (name === 'log') loadTodayLog();
-    if (name === 'students') loadStudents();
+    if (name === 'students') loadStudents(true);
   }
   navBtns.forEach(function (b) {
     b.addEventListener('click', function () { showView(b.getAttribute('data-view')); });
@@ -1401,7 +1588,14 @@
   /* ---------- 학생정보 ---------- */
   function loadStudents(force) {
     var listEl = document.getElementById('stu-list');
-    if (studentsReady && !force) { renderStudents(studentsCache || []); return; }
+    if (studentsReady && !force) {
+      if (!mealApplicantStatsCache && studentsCache && studentsCache.length) {
+        mealApplicantStatsCache = computeMealApplicantStatsClient_(studentsCache);
+      }
+      renderStudentDashboard_(mealApplicantStatsCache || computeMealApplicantStatsClient_(studentsCache || []));
+      renderStudents(studentsCache || []);
+      return;
+    }
     listEl.innerHTML = '<div class="empty-state">불러오는 중…</div>';
     var req = force
         ? Promise.all([api('students'), api('todayLog')])
@@ -1410,15 +1604,19 @@
       var res = Array.isArray(arr) ? arr[0] : arr;
       var logRes = Array.isArray(arr) ? arr[1] : null;
       if (!res || !res.ok) {
+        renderStudentDashboard_({ totalApplicants: 0, grid: [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]] });
         listEl.innerHTML = '<div class="empty-state">' + escapeHtml((res && res.error) || '오류') + '</div>';
         return;
       }
       studentsCache = res.students || [];
       rebuildStudentsById(studentsCache);
       studentsReady = true;
+      mealApplicantStatsCache = res.mealApplicantStats || computeMealApplicantStatsClient_(studentsCache);
       if (logRes && logRes.ok) applyTodayLogToScanned(logRes);
+      renderStudentDashboard_(mealApplicantStatsCache);
       renderStudents(studentsCache);
     }).catch(function (err) {
+      renderStudentDashboard_({ totalApplicants: 0, grid: [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]] });
       listEl.innerHTML = '<div class="empty-state">서버 오류: ' + escapeHtml(err.message || '') + '</div>';
     });
   }
@@ -1435,6 +1633,9 @@
     }
     listEl.innerHTML = filtered.map(function (s) {
       var photo = s.photoUrl ? ensurePhotoLarge(s.photoUrl) : fallbackPhoto();
+      var pill = isMealApplicantStudent_(s)
+          ? '<div class="stu-applicant-pill">방과후 식사 신청</div>'
+          : '';
       return '<div class="student-card student-card--clickable" role="button" tabindex="0" '
            + 'data-student-id="' + escapeHtml(s.studentId || '') + '" '
            + 'data-student-name="' + escapeHtml(s.name || '') + '" '
@@ -1442,11 +1643,15 @@
            + '<img src="' + escapeHtml(photo) + '" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
            + '<div class="nm">' + escapeHtml(s.name || '-') + '</div>'
            + '<div class="meta">' + escapeHtml(s.studentId || '') + '</div>'
+           + pill
            + '</div>';
     }).join('');
   }
   document.getElementById('btn-stu-refresh').addEventListener('click', function () { loadStudents(true); });
   document.getElementById('stu-search').addEventListener('input', function () {
+    if (studentsCache) renderStudents(studentsCache);
+  });
+  document.getElementById('stu-search').addEventListener('search', function () {
     if (studentsCache) renderStudents(studentsCache);
   });
 
