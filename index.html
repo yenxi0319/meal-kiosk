@@ -1063,10 +1063,16 @@
     return !!String(s.periodStart || '').trim() && !!String(s.periodEnd || '').trim();
   }
 
+  function isAdmin(id) {
+    var studentId = String(id || '').trim();
+    return studentId === '999999999' || studentId === '888888888';
+  }
+
   function computeMealApplicantStatsClient_(list) {
     var grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
     var total = 0;
     (list || []).forEach(function (st) {
+      if (isAdmin(st && st.studentId)) return;
       if (!isMealApplicantStudent_(st)) return;
       total++;
       var digits = String(st.studentId || '').replace(/\D/g, '');
@@ -1633,7 +1639,10 @@
         listEl.innerHTML = '<div class="empty-state">' + escapeHtml((res && res.error) || '오류') + '</div>';
         return;
       }
-      countEl.textContent = String(res.count || 0);
+      var studentCount = (res.entries || []).filter(function (e) {
+        return !isAdmin(e && e.studentId);
+      }).length;
+      countEl.textContent = String(studentCount);
       dateEl.textContent = res.date || '-';
       if (!res.entries || !res.entries.length) {
         listEl.innerHTML = '<div class="empty-state">아직 식사한 학생이 없습니다.</div>';
