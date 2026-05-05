@@ -499,162 +499,214 @@
     .stu-dashboard {
       display: flex;
       flex-direction: row;
-      align-items: stretch;
-      justify-content: space-between;
+      align-items: stretch;        /* 좌우 높이 동일하게 */
       gap: 10px;
       flex-shrink: 0;
-      flex-wrap: wrap;
       min-height: 0;
     }
+
+    /* 좌측: 학년·반 그리드 */
     .stu-dashboard-main {
-      flex: 1 1 360px;
+      flex: 1 1 0;
       min-width: 0;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 7px 9px 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .stu-grade-block {
+      flex: 1 1 0;                 /* 3학년 각각 동일 비율로 높이 분배 */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     .stu-grade-block + .stu-grade-block {
-      margin-top: 5px;
-      padding-top: 5px;
       border-top: 1px solid var(--border);
+      margin-top: 6px;
+      padding-top: 6px;
     }
     .stu-grade-label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       color: var(--accent);
-      letter-spacing: -0.02em;
-      margin-bottom: 4px;
-      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 5px;
+      line-height: 1.1;
     }
     .stu-class-grid {
       display: grid;
       grid-template-columns: repeat(10, minmax(0, 1fr));
-      gap: 3px;
+      gap: 4px;
     }
     @media (max-width: 720px) {
-      .stu-class-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-      }
+      .stu-class-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      .stu-dashboard { flex-wrap: wrap; }
     }
     .stu-class-cell {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 3px 1px 4px;
+      border-radius: 8px;
+      padding: 5px 2px 6px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0;
-      min-width: 0;
+      gap: 1px;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, transform 0.06s;
+      transition: background 0.13s, border-color 0.13s, transform 0.06s, box-shadow 0.13s;
     }
     .stu-class-cell:hover {
       background: var(--surface-2);
-      border-color: rgba(79, 209, 197, 0.35);
+      border-color: rgba(79, 209, 197, 0.45);
+      box-shadow: 0 0 0 2px rgba(79, 209, 197, 0.13);
     }
-    .stu-class-cell:active {
-      transform: scale(0.98);
-    }
+    .stu-class-cell:active { transform: scale(0.96); }
     .stu-class-cell.is-active {
       background: var(--accent);
       border-color: var(--accent);
+      box-shadow: 0 2px 10px rgba(79, 209, 197, 0.35);
     }
     .stu-class-cell.is-active .stu-class-num,
-    .stu-class-cell.is-active .stu-class-count {
-      color: #06231f;
-    }
-    .stu-class-cell.is-zero {
-      opacity: 0.4;
-    }
+    .stu-class-cell.is-active .stu-class-count { color: #063330; }
+    .stu-class-cell.is-zero { opacity: 0.38; }
     .stu-class-cell .stu-class-num {
       font-size: 9px;
       font-weight: 600;
       color: var(--text-muted);
-      line-height: 1.05;
+      line-height: 1;
     }
     .stu-class-cell .stu-class-count {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 800;
       font-variant-numeric: tabular-nums;
       color: var(--text);
-      line-height: 1.05;
+      line-height: 1.1;
     }
-    .stu-class-cell.is-zero .stu-class-count {
-      color: var(--text-muted);
+    .stu-class-cell.is-zero .stu-class-count { color: var(--text-muted); }
+
+    /* 우측 사이드: 좌측과 동일 높이, 위 2/3 + 아래 1/3 */
+    .stu-dashboard-side {
+      flex: 0 0 200px;
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
+
+    /* 우측 상단: 기간 + 신청인원 — 2학년 비율(전체의 약 2/3) */
     .stu-dashboard-total {
-      flex: 0 1 auto;
-      min-width: 170px;
-      box-sizing: border-box;
+      flex: 2 1 0;
+      min-height: 0;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 8px 10px;
-      text-align: left;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      min-height: 0;
-      white-space: nowrap;
-    }
-    .stu-dashboard-side {
-      flex: 0 1 220px;
-      min-width: 188px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      justify-content: center;
+      align-items: stretch;
+      gap: 8px;
+      text-align: right;
     }
+
+    /* 1줄: 기간 */
     .stu-total-period-line {
       font-size: 12px;
       font-weight: 600;
       color: var(--text-muted);
-      line-height: 1.2;
+      line-height: 1.45;
       letter-spacing: -0.01em;
       margin: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      word-break: keep-all;
+      text-align: right;
     }
-    .stu-total-period-line.is-empty {
-      opacity: 0.65;
-    }
-    .stu-total-value {
+    .stu-total-period-line.is-empty { opacity: 0.65; }
+
+    /* 2줄: 방과후 식사 신청인원 */
+    .stu-total-headline {
       font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin: 0 0 0 auto;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0;
+      text-align: right;
+    }
+
+    /* 3줄: 288명 — 오른쪽 정렬 */
+    .stu-total-value {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 2px;
+      margin: 0;
     }
     .stu-total-n {
-      font-size: 18px;
-      font-weight: 800;
+      font-size: 28px;
+      font-weight: 900;
       color: var(--accent);
       font-variant-numeric: tabular-nums;
-      margin-right: 2px;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .stu-total-unit {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    /* 우측 하단: 전체 학생 보기 버튼 — 1학년 비율(전체의 약 1/3) */
+    .stu-clear-filter-wrap {
+      flex: 1 1 0;
+      min-height: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
     }
     .stu-clear-filter-btn {
       width: 100%;
-      padding: 7px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 700;
+      height: 100%;
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(79, 209, 197, 0.55);
+      background: rgba(79, 209, 197, 0.10);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 800;
       font-family: inherit;
+      letter-spacing: -0.01em;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .stu-clear-filter-btn::before {
+      content: '☰';
+      font-size: 14px;
     }
     .stu-clear-filter-btn:hover:not(:disabled) {
-      background: var(--surface-2);
-      border-color: rgba(79, 209, 197, 0.35);
+      background: rgba(79, 209, 197, 0.22);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.15);
     }
+    .stu-clear-filter-btn:active:not(:disabled) { transform: scale(0.97); }
     .stu-clear-filter-btn:disabled {
-      opacity: 0.45;
+      opacity: 0.32;
       cursor: default;
+      border-color: var(--border);
+      background: transparent;
+      color: var(--text-muted);
     }
     .stu-applicant-pill {
       margin-top: 6px;
@@ -1181,16 +1233,19 @@
     var pe = String(afterSchoolPeriodCache.end || '').trim();
     var periodLine;
     if (ps && pe) {
-      periodLine = '<div class="stu-total-period-line">[' + escapeHtml(ps) + ' ~ ' + escapeHtml(pe) + '] 기간</div>';
+      periodLine = '<div class="stu-total-period-line">' + escapeHtml(ps) + ' ~ ' + escapeHtml(pe) + '</div>';
     } else {
       periodLine = '<div class="stu-total-period-line is-empty">기간 정보 없음</div>';
     }
     html += '<div class="stu-dashboard-side">';
     html += '<div class="stu-dashboard-total" role="status">';
     html += periodLine;
-    html += '<div class="stu-total-value"><span class="stu-total-n">' + total + '</span>명</div>';
+    html += '<div class="stu-total-headline">방과후 식사 신청인원</div>';
+    html += '<div class="stu-total-value"><span class="stu-total-n">' + total + '</span><span class="stu-total-unit">명</span></div>';
     html += '</div>';
+    html += '<div class="stu-clear-filter-wrap">';
     html += '<button type="button" id="btn-stu-clear-filter" class="stu-clear-filter-btn">전체 학생 보기</button>';
+    html += '</div>';
     html += '</div>';
     mount.innerHTML = html;
     syncStudentFilterUI_();
