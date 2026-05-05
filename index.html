@@ -1164,8 +1164,8 @@
             studentsCache = sres.students || [];
             rebuildStudentsById(studentsCache);
             studentsReady = true;
-            mealApplicantStatsCache = sres.mealApplicantStats
-                || computeMealApplicantStatsClient_(studentsCache);
+            // 항상 클라이언트에서 재계산 → 관리자(999999999, 888888888) 확실히 제외
+            mealApplicantStatsCache = computeMealApplicantStatsClient_(studentsCache);
             syncAfterSchoolPeriodFromApi_(sres, studentsCache);
           } else {
             studentsCache = studentsCache || [];
@@ -1702,7 +1702,8 @@
       studentsCache = res.students || [];
       rebuildStudentsById(studentsCache);
       studentsReady = true;
-      mealApplicantStatsCache = res.mealApplicantStats || computeMealApplicantStatsClient_(studentsCache);
+      // 서버 stats를 무시하고 항상 클라이언트에서 재계산 → 관리자(999999999, 888888888) 확실히 제외
+      mealApplicantStatsCache = computeMealApplicantStatsClient_(studentsCache);
       syncAfterSchoolPeriodFromApi_(res, studentsCache);
       if (logRes && logRes.ok) applyTodayLogToScanned(logRes);
       renderStudentDashboard_(mealApplicantStatsCache);
@@ -1725,7 +1726,9 @@
     }
     listEl.innerHTML = filtered.map(function (s) {
       var photo = s.photoUrl ? ensurePhotoLarge(s.photoUrl) : fallbackPhoto();
-      var pill = isMealApplicantStudent_(s)
+      // 관리자(999999999, 888888888)는 방과후 식사 신청 pill 표시 안 함
+      var adminStudent = isAdmin(s.studentId);
+      var pill = (!adminStudent && isMealApplicantStudent_(s))
           ? '<div class="stu-applicant-pill">방과후 식사 신청</div>'
           : '';
       return '<div class="student-card student-card--clickable" role="button" tabindex="0" '
