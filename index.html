@@ -1072,10 +1072,14 @@
     var grid = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
     var total = 0;
     (list || []).forEach(function (st) {
-      if (isAdmin(st && st.studentId)) return;
       if (!isMealApplicantStudent_(st)) return;
+      
+      // ★ 관리자 학번 예외 처리: 통계 집계에서 완벽히 제외
+      var sid = String(st.studentId || '').trim();
+      if (sid === '999999999' || sid === '888888888') return; 
+
       total++;
-      var digits = String(st.studentId || '').replace(/\D/g, '');
+      var digits = sid.replace(/\D/g, '');
       if (digits.length !== 9) return;
       var g = parseInt(digits.charAt(4), 10);
       var cl = parseInt(digits.substring(5, 7), 10);
