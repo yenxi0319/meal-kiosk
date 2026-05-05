@@ -75,11 +75,49 @@
       gap: 14px;
     }
     .brand {
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
       white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .brand-text-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-school {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      line-height: 1;
+    }
+    .brand-text-sep {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
+    }
+    .brand-system {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);        /* #4fd1c5 청록 — 시스템 테마색 */
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+    .brand-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+      flex-shrink: 0;
+      margin: 0 4px;
     }
     .nav-tabs {
       display: flex;
@@ -952,7 +990,18 @@
   </script>
 
   <header class="topnav">
-    <div class="brand">● 방과후 급식관리</div>
+    <div class="brand">
+      <img class="brand-logo"
+        src="https://raw.githubusercontent.com/yenxi0319/meal-kiosk/main/logo.png"
+        alt="한림항공우주고등학교 교표"
+        onerror="this.style.display='none'" />
+      <div class="brand-text-wrap">
+        <span class="brand-school">한림항공우주고등학교</span>
+        <div class="brand-text-sep"></div>
+        <span class="brand-system">방과후 급식관리 시스템</span>
+      </div>
+    </div>
+    <div class="brand-divider"></div>
     <nav class="nav-tabs" aria-label="주 메뉴">
       <button type="button" class="nav-btn active" data-view="qr">QR 스캔</button>
       <button type="button" class="nav-btn" data-view="log">식사현황</button>
