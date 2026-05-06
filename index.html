@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" crossorigin />
   <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
   <style>
     :root {
@@ -1248,8 +1249,7 @@
         <div class="log-left">
           <div class="log-left-head">
             <div class="log-left-title">
-              <span class="log-left-icon">🍽️</span>
-              <span id="log-title-date">오늘</span>의 식사현황
+              <span id="log-title-date">오늘</span> 식사 완료 학생
             </div>
             <div class="log-left-meta">
               <span class="log-count-badge" id="log-count">0</span>
@@ -1265,7 +1265,7 @@
 
           <!-- 우측 상단: 학년별 차트 -->
           <div class="log-chart-card">
-            <div class="log-chart-title">📊 <span id="log-chart-date-title">오늘</span>의 학년별 식사현황</div>
+            <div class="log-chart-title"><span id="log-chart-date-title">오늘</span> 학년별 식사 현황</div>
             <div id="log-chart" class="log-chart-body">
               <div class="empty-state">데이터 로딩 중…</div>
             </div>
@@ -1273,10 +1273,10 @@
 
           <!-- 우측 하단: 내보내기 -->
           <div class="log-export-card">
-            <div class="log-export-title">📥 기록 내보내기</div>
+            <div class="log-export-title">기록 내보내기</div>
             <div class="log-export-desc">오늘 식사 기록을 CSV 파일로 저장합니다.</div>
             <button class="btn log-export-btn" id="btn-log-export">
-              CSV 다운로드
+              Excel 다운로드 (.xlsx)
             </button>
           </div>
 
@@ -2058,13 +2058,10 @@
       // 날짜를 제목에 반영
       var dateStr = res.date || '';
       var dateFormatted = dateStr.replace(/-/g, '.');  // 2026.05.06
-      var mmdd = dateStr.length >= 10
-        ? (parseInt(dateStr.slice(5,7),10) + '/' + parseInt(dateStr.slice(8,10),10))
-        : '오늘';
       var titleDateEl = document.getElementById('log-title-date');
       var chartDateEl = document.getElementById('log-chart-date-title');
       if (titleDateEl) titleDateEl.textContent = '오늘(' + dateFormatted + ')';
-      if (chartDateEl) chartDateEl.textContent = '오늘(' + mmdd + ')';
+      if (chartDateEl) chartDateEl.textContent = '오늘(' + dateFormatted + ')';
 
       // 좌측 학생 목록
       if (!entries.length) {
@@ -2108,8 +2105,8 @@
       return;
     }
 
-    // 학년별 집계 (관리자 제외)
-    var counts = [0, 0, 0]; // 1학년, 2학년, 3학년
+    // 학년별 식사 집계 (관리자 제외)
+    var counts = [0, 0, 0];
     entries.forEach(function (e) {
       if (isAdmin(e.studentId)) return;
       var digits = String(e.studentId || '').replace(/\D/g, '');
@@ -2118,18 +2115,36 @@
       if (grade >= 1 && grade <= 3) counts[grade - 1]++;
     });
 
+    // 학년별 전체 신청인원 (mealApplicantStatsCache grid에서)
+    var totals = [0, 0, 0];
+    if (mealApplicantStatsCache && mealApplicantStatsCache.grid) {
+      var grid = mealApplicantStatsCache.grid;
+      for (var g = 0; g < 3; g++) {
+        if (grid[g]) {
+          for (var c = 0; c < grid[g].length; c++) totals[g] += (grid[g][c] || 0);
+        }
+      }
+    }
+
     var total = counts[0] + counts[1] + counts[2];
-    var max = Math.max(counts[0], counts[1], counts[2], 1);
+    var totalAll = totals[0] + totals[1] + totals[2];
     var labels = ['1학년', '2학년', '3학년'];
     var barClass = ['bar-1', 'bar-2', 'bar-3'];
     var colors = ['#f472b6', '#fbbf24', '#34d399'];
 
     var html = labels.map(function (label, i) {
-      var pct = Math.round((counts[i] / max) * 100);
+      var maxVal = Math.max(totals[i] || counts[i], 1);
+      var pct = Math.round((counts[i] / maxVal) * 100);
+      var totalStr = totals[i] > 0
+        ? ' <span style="color:#6b7280;font-weight:600;font-size:12px">/ ' + totals[i] + '명</span>'
+        : '';
       return '<div class="log-chart-row">'
            + '<div class="log-chart-label">'
            + '<span class="log-chart-label-grade">' + label + '</span>'
-           + '<span style="color:' + colors[i] + ';font-weight:800">' + counts[i] + '명</span>'
+           + '<span style="font-weight:800">'
+           + '<span style="color:' + colors[i] + '">' + counts[i] + '명</span>'
+           + totalStr
+           + '</span>'
            + '</div>'
            + '<div class="log-chart-bar-wrap">'
            + '<div class="log-chart-bar ' + barClass[i] + '" style="width:' + pct + '%">'
@@ -2139,9 +2154,12 @@
            + '</div>';
     }).join('');
 
+    var totalAllStr = totalAll > 0
+      ? ' <span style="color:#6b7280;font-weight:600;font-size:14px">/ ' + totalAll + '명</span>'
+      : '';
     html += '<div class="log-chart-total">'
           + '<span class="log-chart-total-label">전체 식사 인원</span>'
-          + '<span class="log-chart-total-val">' + total + '명</span>'
+          + '<span class="log-chart-total-val">' + total + '명' + totalAllStr + '</span>'
           + '</div>';
 
     chartEl.innerHTML = html;
@@ -2153,25 +2171,154 @@
       alert('내보낼 식사 기록이 없습니다.');
       return;
     }
-    var bom = '\uFEFF'; // 한글 깨짐 방지
-    var header = '학번,이름,식사시각\n';
-    var rows = entries.map(function (e) {
-      return [
-        '"' + String(e.studentId || '').replace(/"/g, '""') + '"',
-        '"' + String(e.name || '').replace(/"/g, '""') + '"',
-        '"' + String(e.time || '').replace(/"/g, '""') + '"'
-      ].join(',');
-    }).join('\n');
-    var csv = bom + header + rows;
-    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = '급식기록_' + date + '.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    if (typeof XLSX === 'undefined') {
+      alert('엑셀 라이브러리 로드 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
+    // 관리자 제외 후 학년→반→학번 정렬
+    var data = entries
+      .filter(function (e) { return !isAdmin(e.studentId); })
+      .map(function (e) {
+        var digits = String(e.studentId || '').replace(/\D/g, '');
+        var grade  = digits.length === 9 ? parseInt(digits.charAt(4), 10) : 0;
+        var cls    = digits.length === 9 ? parseInt(digits.substring(5, 7), 10) : 0;
+        return { grade: grade, cls: cls, studentId: e.studentId || '', name: e.name || '', time: (e.time || '').slice(11, 19) };
+      })
+      .sort(function (a, b) {
+        if (a.grade !== b.grade) return a.grade - b.grade;
+        if (a.cls   !== b.cls)   return a.cls   - b.cls;
+        return String(a.studentId).localeCompare(String(b.studentId));
+      });
+
+    var wb = XLSX.utils.book_new();
+    var ws = {};
+    var R = 0; // 현재 행 (0-based)
+
+    // 스타일 정의
+    var sTitle    = { font: { bold: true, sz: 14, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '1E3A5F' } }, alignment: { horizontal: 'center', vertical: 'center' }, border: { bottom: { style: 'medium', color: { rgb: '4FD1C5' } } } };
+    var sHeader   = { font: { bold: true, sz: 11, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '2D5A8E' } }, alignment: { horizontal: 'center', vertical: 'center' }, border: { top: { style: 'thin', color: { rgb: '4FD1C5' } }, bottom: { style: 'thin', color: { rgb: '4FD1C5' } } } };
+    var sGradeSep = { font: { bold: true, sz: 12, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '1A73E8' } }, alignment: { horizontal: 'center', vertical: 'center' } };
+    var sClsSep   = { font: { bold: true, sz: 11, color: { rgb: '1E3A5F' } }, fill: { fgColor: { rgb: 'BEE3F8' } }, alignment: { horizontal: 'center', vertical: 'center' } };
+    var sData     = { font: { sz: 11 }, alignment: { horizontal: 'center', vertical: 'center' }, border: { bottom: { style: 'thin', color: { rgb: 'E2E8F0' } } } };
+    var sDataAlt  = { font: { sz: 11 }, fill: { fgColor: { rgb: 'F7FAFC' } }, alignment: { horizontal: 'center', vertical: 'center' }, border: { bottom: { style: 'thin', color: { rgb: 'E2E8F0' } } } };
+    var sSubtotal = { font: { bold: true, sz: 11, color: { rgb: '2D5A8E' } }, fill: { fgColor: { rgb: 'EBF8FF' } }, alignment: { horizontal: 'center', vertical: 'center' }, border: { top: { style: 'thin', color: { rgb: '2D5A8E' } }, bottom: { style: 'thin', color: { rgb: '2D5A8E' } } } };
+    var sGradeSum = { font: { bold: true, sz: 12, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '2B6CB0' } }, alignment: { horizontal: 'center', vertical: 'center' } };
+    var sTotal    = { font: { bold: true, sz: 13, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '1A365D' } }, alignment: { horizontal: 'center', vertical: 'center' } };
+
+    var setCell = function (r, c, v, s) {
+      var addr = XLSX.utils.encode_cell({ r: r, c: c });
+      ws[addr] = { v: v, t: typeof v === 'number' ? 'n' : 's', s: s };
+    };
+    var merge = function (r1, c1, r2, c2) {
+      if (!ws['!merges']) ws['!merges'] = [];
+      ws['!merges'].push({ s: { r: r1, c: c1 }, e: { r: r2, c: c2 } });
+    };
+
+    // 제목 행
+    setCell(R, 0, '방과후 급식 기록 (' + date.replace(/-/g, '.') + ')', sTitle);
+    for (var tc = 1; tc <= 4; tc++) setCell(R, tc, '', sTitle);
+    merge(R, 0, R, 4);
+    R++;
+
+    // 헤더 행
+    ['학년', '반', '학번', '이름', '식사시각'].forEach(function (h, ci) { setCell(R, ci, h, sHeader); });
+    R++;
+
+    var grandTotal = 0;
+    var curGrade = -1, curCls = -1;
+    var clsStartR = R, gradeStartR = R;
+    var clsCount = 0, gradeCount = 0;
+    var rowAlt = 0;
+
+    for (var i = 0; i < data.length; i++) {
+      var e = data[i];
+      var isNewGrade = (e.grade !== curGrade);
+      var isNewCls   = isNewGrade || (e.cls !== curCls);
+
+      if (isNewCls && i > 0) {
+        // 반 소계
+        setCell(R, 0, '', sSubtotal); setCell(R, 1, '', sSubtotal); setCell(R, 2, '', sSubtotal);
+        setCell(R, 3, curGrade + '학년 ' + curCls + '반 소계', sSubtotal);
+        setCell(R, 4, clsCount + '명', sSubtotal);
+        merge(R, 0, R, 2); merge(R, 3, R, 3);
+        R++; clsCount = 0; rowAlt = 0;
+      }
+
+      if (isNewGrade && i > 0) {
+        // 학년 합계
+        setCell(R, 0, curGrade + '학년 합계', sGradeSum);
+        for (var gc = 1; gc <= 3; gc++) setCell(R, gc, '', sGradeSum);
+        setCell(R, 4, gradeCount + '명', sGradeSum);
+        merge(R, 0, R, 3);
+        R++; R++; // 빈 행 하나 추가
+        setCell(R - 1, 0, '', {}); // 빈행 처리
+        gradeCount = 0;
+      }
+
+      if (isNewGrade) {
+        // 학년 구분 헤더
+        for (var gsc = 0; gsc <= 4; gsc++) setCell(R, gsc, gsc === 0 ? '── ' + e.grade + '학년 ──' : '', sGradeSep);
+        merge(R, 0, R, 4);
+        R++;
+        gradeStartR = R;
+        curGrade = e.grade;
+      }
+
+      if (isNewCls) {
+        // 반 구분 헤더
+        for (var csc = 0; csc <= 4; csc++) setCell(R, csc, csc === 0 ? e.grade + '학년 ' + e.cls + '반' : '', sClsSep);
+        merge(R, 0, R, 4);
+        R++;
+        clsStartR = R;
+        curCls = e.cls;
+      }
+
+      // 학생 데이터 행 (줄무늬)
+      var sRow = rowAlt % 2 === 0 ? sData : sDataAlt;
+      setCell(R, 0, e.grade + '학년', sRow);
+      setCell(R, 1, e.cls + '반', sRow);
+      setCell(R, 2, e.studentId, sRow);
+      setCell(R, 3, e.name, sRow);
+      setCell(R, 4, e.time, sRow);
+      R++; clsCount++; gradeCount++; grandTotal++; rowAlt++;
+    }
+
+    // 마지막 반 소계
+    if (data.length > 0) {
+      setCell(R, 0, '', sSubtotal); setCell(R, 1, '', sSubtotal); setCell(R, 2, '', sSubtotal);
+      setCell(R, 3, curGrade + '학년 ' + curCls + '반 소계', sSubtotal);
+      setCell(R, 4, clsCount + '명', sSubtotal);
+      merge(R, 0, R, 2); R++;
+      // 마지막 학년 합계
+      setCell(R, 0, curGrade + '학년 합계', sGradeSum);
+      for (var lgc = 1; lgc <= 3; lgc++) setCell(R, lgc, '', sGradeSum);
+      setCell(R, 4, gradeCount + '명', sGradeSum);
+      merge(R, 0, R, 3); R++; R++;
+      // 전체 합계
+      setCell(R, 0, '★ 전체 합계', sTotal);
+      for (var tc2 = 1; tc2 <= 3; tc2++) setCell(R, tc2, '', sTotal);
+      setCell(R, 4, grandTotal + '명', sTotal);
+      merge(R, 0, R, 3); R++;
+    }
+
+    // 열 너비 자동 설정
+    ws['!cols'] = [
+      { wch: 10 },  // 학년
+      { wch: 8 },   // 반
+      { wch: 16 },  // 학번
+      { wch: 14 },  // 이름
+      { wch: 12 }   // 식사시각
+    ];
+    // 행 높이
+    ws['!rows'] = [];
+    ws['!rows'][0] = { hpt: 30 }; // 제목행
+    ws['!rows'][1] = { hpt: 22 }; // 헤더행
+
+    ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: R, c: 4 } });
+
+    XLSX.utils.book_append_sheet(wb, ws, '급식기록');
+    XLSX.writeFile(wb, '방과후급식기록_' + date + '.xlsx');
   }
 
   document.getElementById('btn-log-refresh').addEventListener('click', loadTodayLog);
