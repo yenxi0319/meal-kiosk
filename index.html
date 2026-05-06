@@ -468,30 +468,33 @@
       flex-shrink: 0;
     }
     .log-left-title {
-      font-size: 15px;
-      font-weight: 800;
+      font-size: 18px;
+      font-weight: 900;
       color: var(--text);
       display: flex;
       align-items: center;
       gap: 6px;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
     }
-    .log-left-icon { font-size: 18px; }
+    .log-left-icon { font-size: 20px; }
     .log-left-meta {
       display: flex;
-      align-items: center;
-      gap: 5px;
+      align-items: baseline;
+      gap: 3px;
       margin-left: auto;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-muted);
     }
     .log-count-badge {
-      font-size: 22px;
+      font-size: 28px;
       font-weight: 900;
-      color: #f472b6;   /* 핑크 포인트 */
+      color: #f472b6;
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .log-count-unit {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-muted);
     }
     .log-date-text {
       font-size: 12px;
@@ -533,12 +536,13 @@
       flex: 1 1 0;
       min-height: 0;
       background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      border: 2px solid rgba(255, 255, 255, 0.75);
       border-radius: var(--radius);
       padding: 16px 18px;
       display: flex;
       flex-direction: column;
       gap: 14px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
     }
     .log-chart-title {
       font-size: 14px;
@@ -620,12 +624,13 @@
     .log-export-card {
       flex: 0 0 auto;
       background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      border: 2px solid rgba(255, 255, 255, 0.75);
       border-radius: var(--radius);
       padding: 16px 18px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
     }
     .log-export-title {
       font-size: 14px;
@@ -1243,11 +1248,11 @@
           <div class="log-left-head">
             <div class="log-left-title">
               <span class="log-left-icon">🍽️</span>
-              오늘 식사 현황
+              <span id="log-title-date">오늘</span>의 식사현황
             </div>
             <div class="log-left-meta">
-              <span class="log-count-badge" id="log-count">0</span>명
-              <span class="log-date-text" id="log-date">-</span>
+              <span class="log-count-badge" id="log-count">0</span>
+              <span class="log-count-unit">명</span>
             </div>
             <button class="btn btn-sm" id="btn-log-refresh">새로고침</button>
           </div>
@@ -1259,7 +1264,7 @@
 
           <!-- 우측 상단: 학년별 차트 -->
           <div class="log-chart-card">
-            <div class="log-chart-title">📊 학년별 식사 현황</div>
+            <div class="log-chart-title">📊 <span id="log-chart-date-title">오늘</span>의 학년별 식사현황</div>
             <div id="log-chart" class="log-chart-body">
               <div class="empty-state">데이터 로딩 중…</div>
             </div>
@@ -2038,7 +2043,6 @@
   function loadTodayLog() {
     var listEl = document.getElementById('log-list');
     var countEl = document.getElementById('log-count');
-    var dateEl = document.getElementById('log-date');
     listEl.innerHTML = '<div class="empty-state">불러오는 중…</div>';
     api('todayLog').then(function (res) {
       if (!res || !res.ok) {
@@ -2049,7 +2053,17 @@
       var entries = res.entries || [];
       var nonAdmin = entries.filter(function (e) { return !isAdmin(e && e.studentId); });
       countEl.textContent = String(nonAdmin.length);
-      dateEl.textContent = res.date || '-';
+
+      // 날짜를 제목에 반영
+      var dateStr = res.date || '';
+      var dateFormatted = dateStr.replace(/-/g, '.');  // 2026.05.06
+      var mmdd = dateStr.length >= 10
+        ? (parseInt(dateStr.slice(5,7),10) + '/' + parseInt(dateStr.slice(8,10),10))
+        : '오늘';
+      var titleDateEl = document.getElementById('log-title-date');
+      var chartDateEl = document.getElementById('log-chart-date-title');
+      if (titleDateEl) titleDateEl.textContent = '오늘(' + dateFormatted + ')';
+      if (chartDateEl) chartDateEl.textContent = '오늘(' + mmdd + ')';
 
       // 좌측 학생 목록
       if (!entries.length) {
