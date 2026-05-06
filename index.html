@@ -350,7 +350,28 @@
       font-size: clamp(11px, 1.4vw, 13px);
       line-height: 1.35;
       justify-content: center;
-      padding: 8px 14px 10px;
+      align-items: center;
+      padding: 24px 14px 20px;
+      gap: 16px;
+    }
+    #student-panel.empty .empty-logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #student-panel.empty .empty-logo {
+      width: min(240px, 55%);
+      opacity: 0.18;
+      filter: brightness(0) invert(1);
+      user-select: none;
+      pointer-events: none;
+    }
+    #student-panel.empty .empty-hint {
+      font-size: clamp(13px, 1.6vw, 16px);
+      color: var(--text-muted);
+      opacity: 0.7;
+      text-align: center;
+      flex-shrink: 0;
     }
     /* 고정 정사각형 프레임: 원본 비율과 무관하게 동일 크기·cover로 표시 */
     #student-panel .photo-frame {
@@ -1234,7 +1255,14 @@
         <div class="panel panel-right">
           <div class="panel-head">학생 정보</div>
           <div class="panel-body">
-            <div id="student-panel" class="empty">QR 코드를 카메라에 비추면 정보가 표시됩니다.</div>
+            <div id="student-panel" class="empty">
+              <div class="empty-logo-wrap">
+                <img class="empty-logo"
+                  src="https://raw.githubusercontent.com/yenxi0319/meal-kiosk/main/logo.png"
+                  alt="" />
+              </div>
+              <div class="empty-hint">QR 코드를 카메라에 비추면 정보가 표시됩니다.</div>
+            </div>
             <button type="button" class="btn btn-ghost" id="btn-student-reset" aria-label="학생 정보 초기화">정보 초기화</button>
           </div>
         </div>
@@ -1732,8 +1760,10 @@
   function clearStudentPanel(msg) {
     var panel = document.getElementById('student-panel');
     panel.classList.add('empty');
-    panel.innerHTML = '';
-    panel.textContent = msg || 'QR 코드를 카메라에 비추면 정보가 표시됩니다.';
+    panel.innerHTML = '<div class="empty-logo-wrap">'
+      + '<img class="empty-logo" src="https://raw.githubusercontent.com/yenxi0319/meal-kiosk/main/logo.png" alt="" />'
+      + '</div>'
+      + '<div class="empty-hint">' + (msg || 'QR 코드를 카메라에 비추면 정보가 표시됩니다.') + '</div>';
   }
 
   /* ---------- 모달 ---------- */
