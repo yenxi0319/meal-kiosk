@@ -439,33 +439,228 @@
     .btn-primary:hover { background: #6fdbcf; }
     .btn-ghost { background: transparent; }
 
-    /* ----------------- 식사현황 ----------------- */
-    .summary-card {
+    /* ----------------- 식사현황 새 레이아웃 ----------------- */
+    .log-layout {
+      display: flex;
+      flex-direction: row;
+      gap: 14px;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* 좌측 */
+    .log-left {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .log-left-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 22px 26px;
-      margin-bottom: 18px;
+      padding: 12px 16px;
+      flex-shrink: 0;
+    }
+    .log-left-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 6px;
+      letter-spacing: -0.02em;
     }
-    .summary-card .big {
-      font-size: 48px;
-      font-weight: 900;
-      color: var(--accent);
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-    }
-    .summary-card .label {
-      color: var(--text-muted);
+    .log-left-icon { font-size: 18px; }
+    .log-left-meta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: auto;
       font-size: 14px;
-      margin-bottom: 4px;
+      font-weight: 600;
+      color: var(--text-muted);
     }
-    .summary-card .date {
-      font-size: 18px;
+    .log-count-badge {
+      font-size: 22px;
+      font-weight: 900;
+      color: #f472b6;   /* 핑크 포인트 */
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+    }
+    .log-date-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-left: 4px;
+    }
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .log-list-scroll {
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      align-content: start;
+      padding-right: 4px;
+    }
+    .log-list-scroll::-webkit-scrollbar { width: 5px; }
+    .log-list-scroll::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    /* 우측 */
+    .log-right {
+      flex: 0 0 280px;
+      width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* 차트 카드 */
+    .log-chart-card {
+      flex: 1 1 0;
+      min-height: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .log-chart-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+    .log-chart-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+    .log-chart-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .log-chart-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 12px;
       font-weight: 700;
+      color: var(--text-muted);
     }
+    .log-chart-label-grade { color: var(--text); font-weight: 800; }
+    .log-chart-bar-wrap {
+      height: 22px;
+      background: var(--surface);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .log-chart-bar {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      min-width: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+    .log-chart-bar-val {
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(0,0,0,0.65);
+      white-space: nowrap;
+    }
+    .bar-1 { background: linear-gradient(90deg, #f472b6, #fb7185); } /* 핑크 */
+    .bar-2 { background: linear-gradient(90deg, #fbbf24, #f59e0b); } /* 노랑 */
+    .bar-3 { background: linear-gradient(90deg, #34d399, #10b981); } /* 민트 */
+    .log-chart-total {
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .log-chart-total-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .log-chart-total-val {
+      font-size: 20px;
+      font-weight: 900;
+      color: #f472b6;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em;
+    }
+
+    /* 내보내기 카드 */
+    .log-export-card {
+      flex: 0 0 auto;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .log-export-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .log-export-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .log-export-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #fbbf24;
+      background: rgba(251, 191, 36, 0.12);
+      color: #fbbf24;
+      font-size: 14px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: -0.01em;
+    }
+    .log-export-btn:hover {
+      background: rgba(251, 191, 36, 0.22);
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
+    }
+    .log-export-btn:active { transform: scale(0.97); }
 
     .grid {
       display: grid;
@@ -1041,19 +1236,46 @@
 
     <!-- ===== 식사현황 ===== -->
     <section class="view" data-view="log">
-      <div class="summary-card">
-        <div>
-          <div class="big" id="log-count">0</div>
+      <div class="log-layout">
+
+        <!-- 좌측: 식사 학생 목록 -->
+        <div class="log-left">
+          <div class="log-left-head">
+            <div class="log-left-title">
+              <span class="log-left-icon">🍽️</span>
+              오늘 식사 현황
+            </div>
+            <div class="log-left-meta">
+              <span class="log-count-badge" id="log-count">0</span>명
+              <span class="log-date-text" id="log-date">-</span>
+            </div>
+            <button class="btn btn-sm" id="btn-log-refresh">새로고침</button>
+          </div>
+          <div id="log-list" class="log-list-scroll"></div>
         </div>
-        <div>
-          <div class="label">오늘 식사한 학생</div>
-          <div class="date" id="log-date">-</div>
-        </div>
-        <div style="margin-left:auto">
-          <button class="btn" id="btn-log-refresh">새로고침</button>
+
+        <!-- 우측: 차트 + 내보내기 -->
+        <div class="log-right">
+
+          <!-- 우측 상단: 학년별 차트 -->
+          <div class="log-chart-card">
+            <div class="log-chart-title">📊 학년별 식사 현황</div>
+            <div id="log-chart" class="log-chart-body">
+              <div class="empty-state">데이터 로딩 중…</div>
+            </div>
+          </div>
+
+          <!-- 우측 하단: 내보내기 -->
+          <div class="log-export-card">
+            <div class="log-export-title">📥 기록 내보내기</div>
+            <div class="log-export-desc">오늘 식사 기록을 CSV 파일로 저장합니다.</div>
+            <button class="btn log-export-btn" id="btn-log-export">
+              CSV 다운로드
+            </button>
+          </div>
+
         </div>
       </div>
-      <div id="log-list" class="grid"></div>
     </section>
 
     <!-- ===== 학생정보 ===== -->
@@ -1823,33 +2045,120 @@
         listEl.innerHTML = '<div class="empty-state">' + escapeHtml((res && res.error) || '오류') + '</div>';
         return;
       }
-      var studentCount = (res.entries || []).filter(function (e) {
-        return !isAdmin(e && e.studentId);
-      }).length;
-      countEl.textContent = String(studentCount);
+
+      var entries = res.entries || [];
+      var nonAdmin = entries.filter(function (e) { return !isAdmin(e && e.studentId); });
+      countEl.textContent = String(nonAdmin.length);
       dateEl.textContent = res.date || '-';
-      if (!res.entries || !res.entries.length) {
+
+      // 좌측 학생 목록
+      if (!entries.length) {
         listEl.innerHTML = '<div class="empty-state">아직 식사한 학생이 없습니다.</div>';
-        return;
+      } else {
+        listEl.innerHTML = entries.map(function (e) {
+          var photo = e.photoUrl ? ensurePhotoLarge(e.photoUrl) : fallbackPhoto();
+          var time = (e.time || '').slice(11, 19);
+          return '<div class="student-card student-card--clickable" role="button" tabindex="0" '
+               + 'data-student-id="' + escapeHtml(e.studentId || '') + '" '
+               + 'data-student-name="' + escapeHtml(e.name || '') + '" '
+               + 'data-photo="' + escapeHtml(photo) + '">'
+               + '<img src="' + escapeHtml(photo) + '" width="96" height="96" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
+               + '<div class="nm">' + escapeHtml(e.name || '-') + '</div>'
+               + '<div class="meta">' + escapeHtml(e.studentId || '') + '</div>'
+               + '<div class="time">' + escapeHtml(time) + '</div>'
+               + '</div>';
+        }).join('');
       }
-      var html = res.entries.map(function (e) {
-        var photo = e.photoUrl ? ensurePhotoLarge(e.photoUrl) : fallbackPhoto();
-        var time = (e.time || '').slice(11, 19);
-        return '<div class="student-card student-card--clickable" role="button" tabindex="0" '
-             + 'data-student-id="' + escapeHtml(e.studentId || '') + '" '
-             + 'data-student-name="' + escapeHtml(e.name || '') + '" '
-             + 'data-photo="' + escapeHtml(photo) + '">'
-             + '<img src="' + escapeHtml(photo) + '" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
-             + '<div class="nm">' + escapeHtml(e.name || '-') + '</div>'
-             + '<div class="meta">' + escapeHtml(e.studentId || '') + '</div>'
-             + '<div class="time">' + escapeHtml(time) + '</div>'
-             + '</div>';
-      }).join('');
-      listEl.innerHTML = html;
+
+      // 우측 차트 렌더링
+      renderLogChart_(entries, res.date || '');
+
+      // CSV 내보내기 버튼 연결
+      var exportBtn = document.getElementById('btn-log-export');
+      if (exportBtn) {
+        exportBtn.onclick = function () { exportLogCsv_(entries, res.date || ''); };
+      }
+
     }).catch(function (err) {
       listEl.innerHTML = '<div class="empty-state">서버 오류: ' + escapeHtml(err.message || '') + '</div>';
     });
   }
+
+  /** 학년별 바 차트 렌더링 */
+  function renderLogChart_(entries, date) {
+    var chartEl = document.getElementById('log-chart');
+    if (!chartEl) return;
+    if (!entries || !entries.length) {
+      chartEl.innerHTML = '<div class="empty-state" style="font-size:13px">아직 식사 기록이 없습니다.</div>';
+      return;
+    }
+
+    // 학년별 집계 (관리자 제외)
+    var counts = [0, 0, 0]; // 1학년, 2학년, 3학년
+    entries.forEach(function (e) {
+      if (isAdmin(e.studentId)) return;
+      var digits = String(e.studentId || '').replace(/\D/g, '');
+      if (digits.length !== 9) return;
+      var grade = parseInt(digits.charAt(4), 10);
+      if (grade >= 1 && grade <= 3) counts[grade - 1]++;
+    });
+
+    var total = counts[0] + counts[1] + counts[2];
+    var max = Math.max(counts[0], counts[1], counts[2], 1);
+    var labels = ['1학년', '2학년', '3학년'];
+    var barClass = ['bar-1', 'bar-2', 'bar-3'];
+    var colors = ['#f472b6', '#fbbf24', '#34d399'];
+
+    var html = labels.map(function (label, i) {
+      var pct = Math.round((counts[i] / max) * 100);
+      return '<div class="log-chart-row">'
+           + '<div class="log-chart-label">'
+           + '<span class="log-chart-label-grade">' + label + '</span>'
+           + '<span style="color:' + colors[i] + ';font-weight:800">' + counts[i] + '명</span>'
+           + '</div>'
+           + '<div class="log-chart-bar-wrap">'
+           + '<div class="log-chart-bar ' + barClass[i] + '" style="width:' + pct + '%">'
+           + (counts[i] > 0 ? '<span class="log-chart-bar-val">' + counts[i] + '</span>' : '')
+           + '</div>'
+           + '</div>'
+           + '</div>';
+    }).join('');
+
+    html += '<div class="log-chart-total">'
+          + '<span class="log-chart-total-label">전체 식사 인원</span>'
+          + '<span class="log-chart-total-val">' + total + '명</span>'
+          + '</div>';
+
+    chartEl.innerHTML = html;
+  }
+
+  /** CSV 다운로드 */
+  function exportLogCsv_(entries, date) {
+    if (!entries || !entries.length) {
+      alert('내보낼 식사 기록이 없습니다.');
+      return;
+    }
+    var bom = '\uFEFF'; // 한글 깨짐 방지
+    var header = '학번,이름,식사시각\n';
+    var rows = entries.map(function (e) {
+      return [
+        '"' + String(e.studentId || '').replace(/"/g, '""') + '"',
+        '"' + String(e.name || '').replace(/"/g, '""') + '"',
+        '"' + String(e.time || '').replace(/"/g, '""') + '"'
+      ].join(',');
+    }).join('\n');
+    var csv = bom + header + rows;
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '급식기록_' + date + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   document.getElementById('btn-log-refresh').addEventListener('click', loadTodayLog);
 
   /* ---------- 학생정보 ---------- */
