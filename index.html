@@ -1209,7 +1209,7 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbx21mrlYPOglUdw_MYPqL4sJKLiZXnnucJl9meJgbK_s5J7ukg61-wujRkASVsmJh4QGA/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbw4fUrtm9_lWXthBgbBVp3YoK4vsbDDggcEjrJOVi99aD7nqH6NJYfzB3XBBDK1W92hLg/exec';
   </script>
 
   <header class="topnav">
@@ -2075,7 +2075,27 @@
     var listEl = document.getElementById('log-list');
     var countEl = document.getElementById('log-count');
     listEl.innerHTML = '<div class="empty-state">불러오는 중…</div>';
-    api('todayLog').then(function (res) {
+
+    // mealApplicantStatsCache 없으면 students도 같이 로드
+    var needStudents = !mealApplicantStatsCache && !studentsCache;
+    var promise = needStudents
+      ? Promise.all([api('todayLog'), api('students')])
+      : Promise.all([api('todayLog'), Promise.resolve(null)]);
+
+    promise.then(function (results) {
+      var res = results[0];
+      var stuRes = results[1];
+
+      // 학생 데이터 캐시 업데이트
+      if (stuRes && stuRes.ok && stuRes.students) {
+        studentsCache = stuRes.students;
+        rebuildStudentsById(studentsCache);
+        studentsReady = true;
+        mealApplicantStatsCache = stuRes.mealApplicantStats
+          ? stuRes.mealApplicantStats
+          : computeMealApplicantStatsClient_(studentsCache);
+      }
+
       if (!res || !res.ok) {
         listEl.innerHTML = '<div class="empty-state">' + escapeHtml((res && res.error) || '오류') + '</div>';
         return;
