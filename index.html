@@ -689,6 +689,17 @@
       box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
     }
     .log-export-btn:active { transform: scale(0.97); }
+    .log-export-btn--dorm {
+      border-color: rgba(79, 209, 197, 0.55);
+      background: rgba(79, 209, 197, 0.10);
+      color: var(--accent);
+      margin-top: 4px;
+    }
+    .log-export-btn--dorm:hover {
+      background: rgba(79, 209, 197, 0.22);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.15);
+    }
 
     .grid {
       display: grid;
@@ -979,6 +990,156 @@
       color: var(--accent);
     }
 
+    /* ----------------- 기간통계 탭 ----------------- */
+    .view[data-view="stats"] {
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .stats-layout {
+      display: flex;
+      flex-direction: row;
+      gap: 14px;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .stats-left {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .stats-card {
+      flex: 1;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+    .stats-card-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      flex-shrink: 0;
+    }
+    .stats-chart-wrap {
+      flex: 1;
+      min-height: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      padding-bottom: 28px;
+      position: relative;
+    }
+    .stats-chart-wrap::-webkit-scrollbar { height: 5px; }
+    .stats-chart-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .stats-bar-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+      width: 52px;
+    }
+    .stats-bar-total { font-size: 10px; font-weight: 700; color: var(--text-muted); margin-bottom: 2px; }
+    .stats-bar-stack {
+      width: 36px;
+      display: flex;
+      flex-direction: column-reverse;
+      border-radius: 6px 6px 0 0;
+      overflow: hidden;
+    }
+    .stats-bar-seg { width: 100%; }
+    .stats-bar-label { font-size: 10px; font-weight: 700; color: var(--text-muted); margin-top: 4px; text-align: center; white-space: nowrap; }
+    .stats-bar-day  { font-size: 9px; color: var(--text-muted); opacity: 0.6; }
+    .stats-legend {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
+    .stats-right {
+      flex: 0 0 260px;
+      width: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .stats-summary-card {
+      flex: 1 1 0;
+      min-height: 0;
+      background: var(--bg-elevated);
+      border: 2px solid rgba(255,255,255,0.75);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+    .stats-summary-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+    .stats-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .stats-summary-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .stats-summary-label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+    .stats-summary-val   { font-size: 20px; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+    .stats-summary-val-pink { color: #f472b6; }
+    .stats-summary-unit  { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-left: 2px; }
+    .stats-export-card {
+      flex: 0 0 auto;
+      background: var(--bg-elevated);
+      border: 2px solid rgba(255,255,255,0.75);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .stats-export-title { font-size: 14px; font-weight: 800; color: var(--text); }
+    .stats-export-desc  { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .stats-export-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(79,209,197,0.55);
+      background: rgba(79,209,197,0.10);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stats-export-btn:hover { background: rgba(79,209,197,0.22); box-shadow: 0 0 0 3px rgba(79,209,197,0.15); }
+    .stats-export-btn:active { transform: scale(0.97); }
+
     /* ----------------- 모달 ----------------- */
     .modal {
       position: fixed;
@@ -1209,7 +1370,7 @@
   <!--   ★ 배포 후 이 한 줄만 본인 GAS URL로 교체!     -->
   <!-- ============================================== -->
   <script>
-    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwXUGVuMX0HCbpjbk9RzNfKqUCXSTFRlz4Ly9h9Jf7a7nLT7ezISGjVnkXMVnVvoAi9rA/exec';
+    var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbzRb3f7lC05GeNa48hN34zU5A75mitMDayNwvzY0kRjIU4Uz7alOvrSQ2V000WH8SLReQ/exec';
   </script>
 
   <header class="topnav">
@@ -1229,6 +1390,7 @@
       <button type="button" class="nav-btn active" data-view="qr">QR 스캔</button>
       <button type="button" class="nav-btn" data-view="log">식사현황</button>
       <button type="button" class="nav-btn" data-view="students">학생정보</button>
+      <button type="button" class="nav-btn" data-view="stats">기간통계</button>
     </nav>
     <div class="clock" id="clock"></div>
   </header>
@@ -1302,9 +1464,12 @@
           <!-- 우측 하단: 내보내기 -->
           <div class="log-export-card">
             <div class="log-export-title">기록 내보내기</div>
-            <div class="log-export-desc">오늘 식사 기록을 CSV 파일로 저장합니다.</div>
+            <div class="log-export-desc">오늘 식사 기록을 Excel 파일로 저장합니다.</div>
             <button class="btn log-export-btn" id="btn-log-export">
-              Excel 다운로드 (.xlsx)
+              급식소용 Excel (.xlsx)
+            </button>
+            <button class="btn log-export-btn log-export-btn--dorm" id="btn-log-export-dorm">
+              기숙사용 Excel (.xlsx)
             </button>
           </div>
 
@@ -1321,6 +1486,41 @@
       </div>
       <div class="stu-list-wrap">
         <div id="stu-list" class="grid"></div>
+      </div>
+    </section>
+
+    <!-- ===== 기간통계 ===== -->
+    <section class="view" data-view="stats">
+      <div class="stats-layout">
+        <!-- 좌측: 일별 막대그래프 -->
+        <div class="stats-left">
+          <div class="stats-card">
+            <div class="stats-card-title" id="stats-period-title">방과후 기간 통계</div>
+            <div class="stats-chart-wrap" id="stats-chart">
+              <div class="empty-state">데이터 로딩 중…</div>
+            </div>
+            <div class="stats-legend">
+              <span class="legend-dot" style="background:#f472b6"></span>1학년
+              <span class="legend-dot" style="background:#fbbf24"></span>2학년
+              <span class="legend-dot" style="background:#34d399"></span>3학년
+            </div>
+          </div>
+        </div>
+        <!-- 우측 -->
+        <div class="stats-right">
+          <!-- 요약 카드 -->
+          <div class="stats-summary-card" id="stats-summary">
+            <div class="empty-state">로딩 중…</div>
+          </div>
+          <!-- 내보내기 -->
+          <div class="stats-export-card">
+            <div class="stats-export-title">기간 기록 내보내기</div>
+            <div class="stats-export-desc">방과후 전체 기간의 데이터를 Excel로 저장합니다.</div>
+            <button class="btn stats-export-btn" id="btn-stats-export">
+              전체 기간 Excel (.xlsx)
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1706,6 +1906,7 @@
     if (name !== 'qr') stopQr();
     if (name === 'log') loadTodayLog();
     if (name === 'students') loadStudents(true);
+    if (name === 'stats') loadStatsData();
   }
   navBtns.forEach(function (b) {
     b.addEventListener('click', function () { showView(b.getAttribute('data-view')); });
@@ -2118,7 +2319,11 @@
       // CSV 내보내기 버튼 연결
       var exportBtn = document.getElementById('btn-log-export');
       if (exportBtn) {
-        exportBtn.onclick = function () { exportLogCsv_(entries, res.date || ''); };
+        exportBtn.onclick = function () { exportLogCsv_(entries, res.date || '', false); };
+      }
+      var exportDormBtn = document.getElementById('btn-log-export-dorm');
+      if (exportDormBtn) {
+        exportDormBtn.onclick = function () { exportLogCsv_(entries, res.date || '', true); };
       }
 
     }).catch(function (err) {
@@ -2196,15 +2401,179 @@
   }
 
   /** CSV 다운로드 */
-  function exportLogCsv_(entries, date) {
-    if (!entries || !entries.length) {
-      alert('내보낼 식사 기록이 없습니다.');
-      return;
+  function exportLogCsv_(entries, date, dormOnly) {
+    if (!entries || !entries.length) { alert('내보낼 식사 기록이 없습니다.'); return; }
+    if (typeof XLSX === 'undefined') { alert('엑셀 라이브러리 로드 중입니다. 잠시 후 다시 시도해주세요.'); return; }
+
+    // 관리자 제외
+    var allData = entries.filter(function (e) { return !isAdmin(e.studentId); });
+
+    // 기숙사 모드: isDorm=true인 학생만
+    var eatData = dormOnly
+      ? allData.filter(function (e) {
+          var s = studentsById[e.studentId];
+          return s && s.isDorm;
+        })
+      : allData;
+
+    if (dormOnly && !eatData.length) { alert('기숙사 학생 식사 기록이 없습니다.'); return; }
+
+    // 학년→반→학번 정렬
+    eatData = eatData.map(function (e) {
+      var digits = String(e.studentId || '').replace(/\D/g, '');
+      return {
+        grade: digits.length === 9 ? parseInt(digits.charAt(4), 10) : 0,
+        cls:   digits.length === 9 ? parseInt(digits.substring(5, 7), 10) : 0,
+        studentId: e.studentId || '', name: e.name || '',
+        time: (e.time || '').slice(11, 19)
+      };
+    }).sort(function (a, b) {
+      if (a.grade !== b.grade) return a.grade - b.grade;
+      if (a.cls   !== b.cls)   return a.cls   - b.cls;
+      return String(a.studentId).localeCompare(String(b.studentId));
+    });
+
+    var wb = XLSX.utils.book_new();
+
+    // ── 시트1: 식사 기록 ──
+    var ws1 = buildMealSheet_(eatData, date, dormOnly ? '기숙사 식사 기록' : '급식소 식사 기록');
+    XLSX.utils.book_append_sheet(wb, ws1, dormOnly ? '기숙사식사기록' : '급식소식사기록');
+
+    // ── 시트2: 비급식 학생 (기숙사 모드면 기숙사 미식사, 일반 모드면 전체 미식사) ──
+    var eatenIds = {};
+    eatData.forEach(function (e) { eatenIds[e.studentId] = true; });
+    var notEaten = [];
+    if (studentsCache) {
+      studentsCache.forEach(function (s) {
+        if (isAdmin(s.studentId)) return;
+        if (dormOnly && !s.isDorm) return;
+        if (!s.periodStart || !s.periodEnd) return; // 미신청자 제외
+        if (!eatenIds[s.studentId]) {
+          var digits = String(s.studentId || '').replace(/\D/g, '');
+          notEaten.push({
+            grade: digits.length === 9 ? parseInt(digits.charAt(4), 10) : 0,
+            cls:   digits.length === 9 ? parseInt(digits.substring(5, 7), 10) : 0,
+            studentId: s.studentId, name: s.name
+          });
+        }
+      });
+      notEaten.sort(function (a, b) {
+        if (a.grade !== b.grade) return a.grade - b.grade;
+        if (a.cls   !== b.cls)   return a.cls   - b.cls;
+        return String(a.studentId).localeCompare(String(b.studentId));
+      });
     }
-    if (typeof XLSX === 'undefined') {
-      alert('엑셀 라이브러리 로드 중입니다. 잠시 후 다시 시도해주세요.');
-      return;
+    var ws2 = buildNotEatenSheet_(notEaten, date, dormOnly);
+    XLSX.utils.book_append_sheet(wb, ws2, dormOnly ? '기숙사미식사' : '미식사학생');
+
+    var prefix = dormOnly ? '기숙사급식기록_' : '방과후급식기록_';
+    XLSX.writeFile(wb, prefix + date + '.xlsx');
+  }
+
+  /** 식사기록 시트 생성 */
+  function buildMealSheet_(data, date, sheetTitle) {
+    var ws = {};
+    var R = 0;
+    var q = function (v) { return { v: String(v), t: 's' }; };
+    var n = function (v) { return { v: v, t: 'n' }; };
+
+    var sTitle  = { font:{bold:true,sz:13,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'1E3A5F'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sHeader = { font:{bold:true,sz:11,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'2D5A8E'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sGrade  = { font:{bold:true,sz:12,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'1A73E8'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sCls    = { font:{bold:true,sz:11,color:{rgb:'1E3A5F'}}, fill:{fgColor:{rgb:'BEE3F8'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sData   = { font:{sz:11}, alignment:{horizontal:'center',vertical:'center'}, border:{bottom:{style:'thin',color:{rgb:'E2E8F0'}}} };
+    var sAlt    = { font:{sz:11}, fill:{fgColor:{rgb:'F7FAFC'}}, alignment:{horizontal:'center',vertical:'center'}, border:{bottom:{style:'thin',color:{rgb:'E2E8F0'}}} };
+    var sSub    = { font:{bold:true,sz:11,color:{rgb:'2D5A8E'}}, fill:{fgColor:{rgb:'EBF8FF'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sGSum   = { font:{bold:true,sz:12,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'2B6CB0'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sTotal  = { font:{bold:true,sz:13,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'1A365D'}}, alignment:{horizontal:'center',vertical:'center'} };
+
+    var sc = function (r, c, v, s) {
+      var a = XLSX.utils.encode_cell({r:r,c:c});
+      ws[a] = Object.assign(typeof v === 'object' && v !== null ? v : {v:v,t:'s'}, {s:s});
+    };
+    var mg = function (r1,c1,r2,c2) { if(!ws['!merges'])ws['!merges']=[]; ws['!merges'].push({s:{r:r1,c:c1},e:{r:r2,c:c2}}); };
+
+    // 제목
+    sc(R,0,sheetTitle+'  ('+date.replace(/-/g,'.')+')',sTitle);
+    for(var tc=1;tc<=4;tc++) sc(R,tc,'',sTitle); mg(R,0,R,4); R++;
+    // 헤더
+    ['학년','반','학번','이름','식사시각'].forEach(function(h,ci){sc(R,ci,h,sHeader);}); R++;
+
+    var curGrade=-1,curCls=-1,clsCnt=0,grCnt=0,grandTotal=0,rowAlt=0;
+    for(var i=0;i<data.length;i++){
+      var e=data[i];
+      var ng=e.grade!==curGrade, nc=ng||(e.cls!==curCls);
+      if(nc&&i>0){
+        sc(R,0,'',sSub);sc(R,1,'',sSub);sc(R,2,'',sSub);
+        sc(R,3,curGrade+'학년 '+curCls+'반 소계',sSub);sc(R,4,clsCnt+'명',sSub);
+        mg(R,0,R,2);R++;clsCnt=0;rowAlt=0;
+      }
+      if(ng&&i>0){
+        sc(R,0,curGrade+'학년 합계',sGSum);for(var gc=1;gc<=3;gc++)sc(R,gc,'',sGSum);sc(R,4,grCnt+'명',sGSum);
+        mg(R,0,R,3);R++;R++;sc(R-1,0,{v:'',t:'s'},{});grCnt=0;
+      }
+      if(ng){sc(R,0,'── '+e.grade+'학년 ──',sGrade);for(var gsc=1;gsc<=4;gsc++)sc(R,gsc,'',sGrade);mg(R,0,R,4);R++;curGrade=e.grade;}
+      if(nc){sc(R,0,e.grade+'학년 '+e.cls+'반',sCls);for(var csc=1;csc<=4;csc++)sc(R,csc,'',sCls);mg(R,0,R,4);R++;curCls=e.cls;}
+      var sr=rowAlt%2===0?sData:sAlt;
+      sc(R,0,e.grade+'학년',sr);sc(R,1,e.cls+'반',sr);sc(R,2,e.studentId,sr);sc(R,3,e.name,sr);sc(R,4,e.time,sr);
+      R++;clsCnt++;grCnt++;grandTotal++;rowAlt++;
     }
+    if(data.length>0){
+      sc(R,0,'',sSub);sc(R,1,'',sSub);sc(R,2,'',sSub);sc(R,3,curGrade+'학년 '+curCls+'반 소계',sSub);sc(R,4,clsCnt+'명',sSub);mg(R,0,R,2);R++;
+      sc(R,0,curGrade+'학년 합계',sGSum);for(var lg=1;lg<=3;lg++)sc(R,lg,'',sGSum);sc(R,4,grCnt+'명',sGSum);mg(R,0,R,3);R++;R++;
+      sc(R,0,'★ 전체 합계',sTotal);for(var lt=1;lt<=3;lt++)sc(R,lt,'',sTotal);sc(R,4,grandTotal+'명',sTotal);mg(R,0,R,3);R++;
+    }
+    ws['!cols']=[{wch:10},{wch:8},{wch:16},{wch:14},{wch:12}];
+    ws['!rows']=[{hpt:28},{hpt:22}];
+    ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R,c:4}});
+    return ws;
+  }
+
+  /** 비급식 학생 시트 생성 */
+  function buildNotEatenSheet_(data, date, dormOnly) {
+    var ws = {};
+    var R = 0;
+    var sTitle  = { font:{bold:true,sz:13,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'7B2D8B'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sHeader = { font:{bold:true,sz:11,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'9B59B6'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sCls    = { font:{bold:true,sz:11,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'D7BDE2'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sData   = { font:{sz:11}, alignment:{horizontal:'center',vertical:'center'}, border:{bottom:{style:'thin',color:{rgb:'E2E8F0'}}} };
+    var sAlt    = { font:{sz:11}, fill:{fgColor:{rgb:'F9F0FF'}}, alignment:{horizontal:'center',vertical:'center'}, border:{bottom:{style:'thin',color:{rgb:'E2E8F0'}}} };
+    var sSub    = { font:{bold:true,sz:11,color:{rgb:'6C3483'}}, fill:{fgColor:{rgb:'F5EEF8'}}, alignment:{horizontal:'center',vertical:'center'} };
+    var sTotal  = { font:{bold:true,sz:13,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'4A235A'}}, alignment:{horizontal:'center',vertical:'center'} };
+
+    var sc = function(r,c,v,s){ var a=XLSX.utils.encode_cell({r:r,c:c}); ws[a]={v:String(v),t:'s',s:s}; };
+    var mg = function(r1,c1,r2,c2){ if(!ws['!merges'])ws['!merges']=[]; ws['!merges'].push({s:{r:r1,c:c1},e:{r:r2,c:c2}}); };
+
+    var title = (dormOnly?'기숙사 ':'')+'미식사 학생 목록  ('+date.replace(/-/g,'.')+')';
+    sc(R,0,title,sTitle);sc(R,1,'',sTitle);sc(R,2,'',sTitle);sc(R,3,'',sTitle);mg(R,0,R,3);R++;
+    ['학년','반','학번','이름'].forEach(function(h,ci){sc(R,ci,h,sHeader);}); R++;
+
+    var curCls=-1,curGrade=-1,clsCnt=0,grandTotal=0,rowAlt=0;
+    for(var i=0;i<data.length;i++){
+      var e=data[i];
+      var nc=(e.grade!==curGrade)||(e.cls!==curCls);
+      if(nc&&i>0){
+        sc(R,0,'',sSub);sc(R,1,'',sSub);sc(R,2,curGrade+'학년 '+curCls+'반 미식사',sSub);sc(R,3,clsCnt+'명',sSub);
+        mg(R,0,R,1);R++;clsCnt=0;rowAlt=0;
+      }
+      if(nc){
+        sc(R,0,e.grade+'학년 '+e.cls+'반',sCls);sc(R,1,'',sCls);sc(R,2,'',sCls);sc(R,3,'',sCls);mg(R,0,R,3);R++;
+        curGrade=e.grade;curCls=e.cls;
+      }
+      var sr=rowAlt%2===0?sData:sAlt;
+      sc(R,0,e.grade+'학년',sr);sc(R,1,e.cls+'반',sr);sc(R,2,e.studentId,sr);sc(R,3,e.name,sr);
+      R++;clsCnt++;grandTotal++;rowAlt++;
+    }
+    if(data.length>0){
+      sc(R,0,'',sSub);sc(R,1,'',sSub);sc(R,2,curGrade+'학년 '+curCls+'반 미식사',sSub);sc(R,3,clsCnt+'명',sSub);mg(R,0,R,1);R++;
+      sc(R,0,'★ 미식사 합계',sTotal);sc(R,1,'',sTotal);sc(R,2,'',sTotal);sc(R,3,grandTotal+'명',sTotal);mg(R,0,R,2);R++;
+    }
+    if(!data.length){ sc(R,0,'미식사 학생 없음',{font:{sz:12},alignment:{horizontal:'center'}});mg(R,0,R,3);R++; }
+    ws['!cols']=[{wch:10},{wch:8},{wch:16},{wch:14}];
+    ws['!rows']=[{hpt:28},{hpt:22}];
+    ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R,c:3}});
+    return ws;
+  }
 
     // 관리자 제외 후 학년→반→학번 정렬
     var data = entries
@@ -2352,6 +2721,168 @@
   }
 
   document.getElementById('btn-log-refresh').addEventListener('click', loadTodayLog);
+
+  /* ==================== 기간통계 탭 ==================== */
+  var statsCache = null;
+
+  function loadStatsData() {
+    var chartEl   = document.getElementById('stats-chart');
+    var summaryEl = document.getElementById('stats-summary');
+    if (chartEl)   chartEl.innerHTML   = '<div class="empty-state">데이터 로딩 중…</div>';
+    if (summaryEl) summaryEl.innerHTML = '<div class="empty-state">로딩 중…</div>';
+
+    api('periodStats').then(function (res) {
+      if (!res || !res.ok) {
+        if (chartEl) chartEl.innerHTML = '<div class="empty-state">' + escapeHtml((res && res.error) || '오류') + '</div>';
+        return;
+      }
+      statsCache = res;
+
+      // 제목 업데이트
+      var titleEl = document.getElementById('stats-period-title');
+      if (titleEl && res.periodStart && res.periodEnd) {
+        titleEl.textContent = res.periodStart.replace(/-/g,'.') + ' ~ ' + res.periodEnd.replace(/-/g,'.') + ' 방과후 급식 통계';
+      }
+
+      renderStatsChart_(res);
+      renderStatsSummary_(res);
+
+      // 엑셀 내보내기 버튼 연결
+      var exportBtn = document.getElementById('btn-stats-export');
+      if (exportBtn) exportBtn.onclick = function () { exportStatsXlsx_(res); };
+    }).catch(function (err) {
+      if (chartEl) chartEl.innerHTML = '<div class="empty-state">오류: ' + escapeHtml(err.message || '') + '</div>';
+    });
+  }
+
+  /** 일별 막대 차트 렌더링 */
+  function renderStatsChart_(res) {
+    var chartEl = document.getElementById('stats-chart');
+    if (!chartEl) return;
+    var daily = res.daily || [];
+    if (!daily.length) {
+      chartEl.innerHTML = '<div class="empty-state">기록된 데이터가 없습니다.</div>';
+      return;
+    }
+    var maxVal = Math.max.apply(null, daily.map(function(d){ return d.total || 1; }));
+    var CHART_H = 180; // px 기준 최대 높이
+    var DAYS = ['일','월','화','수','목','금','토'];
+
+    var html = daily.map(function (d) {
+      var h1 = Math.round((d.grade1 / maxVal) * CHART_H);
+      var h2 = Math.round((d.grade2 / maxVal) * CHART_H);
+      var h3 = Math.round((d.grade3 / maxVal) * CHART_H);
+      var totalH = h1 + h2 + h3;
+      var dt = new Date(d.date + 'T00:00:00+09:00');
+      var mmdd = (dt.getMonth()+1) + '/' + dt.getDate();
+      var dayStr = DAYS[dt.getDay()];
+      return '<div class="stats-bar-group">'
+           + '<div class="stats-bar-total">' + d.total + '</div>'
+           + '<div class="stats-bar-stack" style="height:' + totalH + 'px">'
+           + '<div class="stats-bar-seg" style="height:' + h1 + 'px;background:#f472b6"></div>'
+           + '<div class="stats-bar-seg" style="height:' + h2 + 'px;background:#fbbf24"></div>'
+           + '<div class="stats-bar-seg" style="height:' + h3 + 'px;background:#34d399"></div>'
+           + '</div>'
+           + '<div class="stats-bar-label">' + mmdd + '<br><span class="stats-bar-day">' + dayStr + '</span></div>'
+           + '</div>';
+    }).join('');
+    chartEl.innerHTML = html;
+  }
+
+  /** 우측 요약 카드 렌더링 */
+  function renderStatsSummary_(res) {
+    var el = document.getElementById('stats-summary');
+    if (!el) return;
+    var daily = res.daily || [];
+    var totalMeals = daily.reduce(function(a,d){ return a+d.total; }, 0);
+    var avgMeals   = daily.length ? Math.round(totalMeals / daily.length) : 0;
+    var maxDay     = daily.reduce(function(a,d){ return d.total>a.total?d:a; }, {total:0,date:'-'});
+    var minDay     = daily.filter(function(d){return d.total>0;})
+                          .reduce(function(a,d){ return d.total<a.total?d:a; }, {total:9999,date:'-'});
+
+    var rows = [
+      { label: '운영 일수',       val: res.operatingDays || 0,  unit: '일' },
+      { label: '총 신청 인원',     val: res.totalApplicants || 0, unit: '명' },
+      { label: '총 식사 연인원',   val: totalMeals,               unit: '명' },
+      { label: '1일 평균 식사',    val: avgMeals,                 unit: '명' },
+      { label: '최다 식사일',      val: maxDay.date ? maxDay.date.slice(5).replace('-','/') + ' (' + maxDay.total + '명)' : '-', unit: '' },
+      { label: '최소 식사일',      val: minDay.date ? minDay.date.slice(5).replace('-','/') + ' (' + minDay.total + '명)' : '-', unit: '' },
+      { label: '기숙사 신청 인원', val: res.dormApplicants || 0,  unit: '명' },
+    ];
+
+    el.innerHTML = '<div class="stats-summary-title">📋 전체 기간 요약</div>'
+      + rows.map(function (r) {
+          return '<div class="stats-summary-row">'
+               + '<span class="stats-summary-label">' + escapeHtml(r.label) + '</span>'
+               + '<span><span class="stats-summary-val">' + escapeHtml(String(r.val)) + '</span>'
+               + '<span class="stats-summary-unit">' + r.unit + '</span></span>'
+               + '</div>';
+        }).join('');
+  }
+
+  /** 기간 전체 Excel 내보내기 */
+  function exportStatsXlsx_(res) {
+    if (typeof XLSX === 'undefined') { alert('엑셀 라이브러리 로드 중입니다.'); return; }
+    if (!res || !res.daily || !res.daily.length) { alert('내보낼 데이터가 없습니다.'); return; }
+
+    var wb = XLSX.utils.book_new();
+    var DAYS = ['일','월','화','수','목','금','토'];
+
+    /* ── 시트1: 일별 현황 ── */
+    var ws1 = {}, R = 0;
+    var sc1 = function(r,c,v,s){ var a=XLSX.utils.encode_cell({r:r,c:c}); ws1[a]={v:v,t:typeof v==='number'?'n':'s',s:s||{}}; };
+    var mg1 = function(r1,c1,r2,c2){ if(!ws1['!merges'])ws1['!merges']=[]; ws1['!merges'].push({s:{r:r1,c:c1},e:{r:r2,c:c2}}); };
+
+    var sH = {font:{bold:true,sz:13,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sHd= {font:{bold:true,sz:11,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'2D5A8E'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sD = {font:{sz:11},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'thin',color:{rgb:'E2E8F0'}}}};
+    var sA = {font:{sz:11},fill:{fgColor:{rgb:'F7FAFC'}},alignment:{horizontal:'center',vertical:'center'},border:{bottom:{style:'thin',color:{rgb:'E2E8F0'}}}};
+    var sT = {font:{bold:true,sz:12,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1A365D'}},alignment:{horizontal:'center',vertical:'center'}};
+
+    var period = (res.periodStart||'').replace(/-/g,'.') + ' ~ ' + (res.periodEnd||'').replace(/-/g,'.');
+    sc1(R,0,'일별 식사 현황  ('+period+')',sH); for(var t1=1;t1<=7;t1++)sc1(R,t1,'',sH); mg1(R,0,R,7); R++;
+    ['날짜','요일','1학년','2학년','3학년','식사계','신청인원','미식사'].forEach(function(h,ci){sc1(R,ci,h,sHd);}); R++;
+
+    var grandT=0, grandNE=0;
+    res.daily.forEach(function(d,idx){
+      var sr=idx%2===0?sD:sA;
+      var dt=new Date(d.date+'T00:00:00+09:00');
+      sc1(R,0,d.date.slice(5).replace('-','/'),sr);
+      sc1(R,1,DAYS[dt.getDay()],sr);
+      sc1(R,2,d.grade1,sr); sc1(R,3,d.grade2,sr); sc1(R,4,d.grade3,sr);
+      sc1(R,5,d.total,sr);
+      sc1(R,6,res.totalApplicants||0,sr);
+      sc1(R,7,d.notEaten,sr);
+      grandT+=d.total; grandNE+=d.notEaten; R++;
+    });
+    sc1(R,0,'합계',sT);sc1(R,1,'',sT);sc1(R,2,'',sT);sc1(R,3,'',sT);sc1(R,4,'',sT);
+    sc1(R,5,grandT,sT);sc1(R,6,'',sT);sc1(R,7,grandNE,sT);mg1(R,0,R,4);R++;
+    ws1['!cols']=[{wch:10},{wch:6},{wch:8},{wch:8},{wch:8},{wch:8},{wch:10},{wch:8}];
+    ws1['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R,c:7}});
+    XLSX.utils.book_append_sheet(wb, ws1, '일별현황');
+
+    /* ── 시트2: 학생별 누적 ── */
+    var ws2 = {}, R2 = 0;
+    var sc2 = function(r,c,v,s){ var a=XLSX.utils.encode_cell({r:r,c:c}); ws2[a]={v:v,t:typeof v==='number'?'n':'s',s:s||{}}; };
+    var mg2 = function(r1,c1,r2,c2){ if(!ws2['!merges'])ws2['!merges']=[]; ws2['!merges'].push({s:{r:r1,c:c1},e:{r:r2,c:c2}}); };
+
+    sc2(R2,0,'학생별 누적 식사 현황  ('+period+')',sH);for(var t2=1;t2<=5;t2++)sc2(R2,t2,'',sH);mg2(R2,0,R2,5);R2++;
+    ['학번','이름','기숙사','식사 횟수','미식사 횟수','식사 날짜'].forEach(function(h,ci){sc2(R2,ci,h,sHd);}); R2++;
+
+    (res.students||[]).sort(function(a,b){ return String(a.studentId).localeCompare(String(b.studentId)); })
+    .forEach(function(s,idx){
+      var sr=idx%2===0?sD:sA;
+      sc2(R2,0,s.studentId,sr); sc2(R2,1,s.name,sr);
+      sc2(R2,2,s.isDorm?'Y':'',sr);
+      sc2(R2,3,s.count,sr); sc2(R2,4,s.notEaten,sr);
+      sc2(R2,5,(s.dates||[]).join(', '),sr); R2++;
+    });
+    ws2['!cols']=[{wch:14},{wch:12},{wch:8},{wch:10},{wch:10},{wch:60}];
+    ws2['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R2,c:5}});
+    XLSX.utils.book_append_sheet(wb, ws2, '학생별누적');
+
+    XLSX.writeFile(wb, '방과후급식_기간통계_'+( res.periodStart||'')+'.xlsx');
+  }
 
   /* ---------- 학생정보 ---------- */
   function loadStudents(force) {
