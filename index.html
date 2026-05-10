@@ -969,14 +969,30 @@
       background: transparent;
       color: var(--text-muted);
     }
-    .stu-applicant-pill {
+    .stu-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
       margin-top: 6px;
+    }
+    .stu-applicant-pill {
+
       padding: 3px 10px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
       background: rgba(79, 209, 197, 0.18);
       color: var(--accent);
+    }
+    .stu-dorm-pill {
+
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(251, 191, 36, 0.18);
+      color: #fbbf24;
     }
 
     /* ----------------- 모달 ----------------- */
@@ -1301,7 +1317,7 @@
 
           <!-- 우측 하단: 내보내기 -->
           <div class="log-export-card">
-            <div class="log-export-title">식사 기록 내보내기(급식소용)</div>
+            <div class="log-export-title">기록 내보내기</div>
             <div class="log-export-desc">오늘 식사 기록을 엑셀 파일로 저장합니다.</div>
             <button class="btn log-export-btn" id="btn-log-export">
               Excel 다운로드 (.xlsx)
@@ -2417,6 +2433,7 @@
       var pill = (!adminStudent && isMealApplicantStudent_(s))
           ? '<div class="stu-applicant-pill">방과후 식사 신청</div>'
           : '';
+      var dormPill = s.isDorm ? '<div class="stu-dorm-pill">기숙사생</div>' : '';
       return '<div class="student-card student-card--clickable" role="button" tabindex="0" '
            + 'data-student-id="' + escapeHtml(s.studentId || '') + '" '
            + 'data-student-name="' + escapeHtml(s.name || '') + '" '
@@ -2424,7 +2441,7 @@
            + '<img src="' + escapeHtml(photo) + '" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
            + '<div class="nm">' + escapeHtml(s.name || '-') + '</div>'
            + '<div class="meta">' + escapeHtml(s.studentId || '') + '</div>'
-           + pill
+           + (pill || dormPill ? '<div class="stu-pills">' + pill + dormPill + '</div>' : '')
            + '</div>';
     }).join('');
   }
