@@ -1274,6 +1274,124 @@
     .student-card.student-card--clickable:active {
       transform: scale(0.98);
     }
+    /* ===== 기숙사관리 탭 ===== */
+    .view[data-view="dorm"] { overflow: hidden; }
+    .dorm-layout {
+      display: flex; flex-direction: row; gap: 14px;
+      flex: 1; min-height: 0; overflow: hidden;
+    }
+    .dorm-left {
+      flex: 1 1 0; min-width: 0; display: flex;
+      flex-direction: column; gap: 10px;
+    }
+    .dorm-left-head {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 16px; flex-shrink: 0;
+    }
+    .dorm-left-title {
+      font-size: 18px; font-weight: 900; color: var(--text);
+      letter-spacing: -0.03em;
+    }
+    .dorm-count-badge {
+      font-size: 28px; font-weight: 900; font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em; line-height: 1;
+    }
+    .dorm-count-badge.eat    { color: #fbbf24; }
+    .dorm-count-badge.noteat { color: var(--danger); }
+    .dorm-count-unit { font-size: 15px; font-weight: 700; color: var(--text-muted); }
+    .dorm-list-scroll {
+      flex: 1; overflow-y: auto;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px; align-content: start; padding-right: 4px;
+    }
+    .dorm-list-scroll::-webkit-scrollbar { width: 5px; }
+    .dorm-list-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .dorm-right {
+      flex: 0 0 280px; width: 280px; display: flex;
+      flex-direction: column; gap: 12px;
+    }
+    .dorm-chart-card {
+      flex: 1 1 0; min-height: 0; background: var(--bg-elevated);
+      border: 2px solid rgba(255,255,255,0.75); border-radius: var(--radius);
+      padding: 16px 18px; display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    .dorm-chart-head {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; gap: 8px;
+    }
+    .dorm-chart-title {
+      font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -0.02em;
+    }
+    .dorm-mode-btns { display: flex; gap: 5px; flex-shrink: 0; }
+    .dorm-mode-btn {
+      padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800;
+      font-family: inherit; cursor: pointer; letter-spacing: -0.01em;
+      transition: background 0.13s, border-color 0.13s;
+      border: 1.5px solid rgba(251,191,36,0.45);
+      background: transparent; color: #fbbf24;
+    }
+    .dorm-mode-btn.active {
+      background: rgba(251,191,36,0.2); border-color: #fbbf24;
+    }
+    .dorm-mode-btn:hover:not(.active) { background: rgba(251,191,36,0.09); }
+    .dorm-mode-btn.noteat-btn {
+      border-color: rgba(248,113,113,0.45); color: var(--danger);
+    }
+    .dorm-mode-btn.noteat-btn.active {
+      background: rgba(248,113,113,0.2); border-color: var(--danger);
+    }
+    .dorm-mode-btn.noteat-btn:hover:not(.active) { background: rgba(248,113,113,0.09); }
+    .dorm-chart-body {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: center; gap: 10px;
+    }
+    .dorm-chart-row { display: flex; flex-direction: column; gap: 4px; }
+    .dorm-chart-label {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 12px; font-weight: 700; color: var(--text-muted);
+    }
+    .dorm-chart-label-grade { color: var(--text); font-weight: 800; }
+    .dorm-bar-wrap {
+      height: 22px; background: var(--surface); border-radius: 8px; overflow: hidden;
+    }
+    .dorm-bar-eat {
+      height: 100%; border-radius: 8px;
+      background: linear-gradient(90deg,#fbbf24,#f59e0b);
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;
+    }
+    .dorm-bar-noteat {
+      height: 100%; border-radius: 8px;
+      background: linear-gradient(90deg,#f87171,#ef4444);
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;
+    }
+    .dorm-bar-val { font-size: 11px; font-weight: 800; color: rgba(0,0,0,0.65); white-space: nowrap; }
+    .dorm-chart-total {
+      margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+    }
+    .dorm-chart-total-label { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+    .dorm-export-card {
+      flex: 0 0 auto; background: var(--bg-elevated);
+      border: 2px solid rgba(255,255,255,0.75); border-radius: var(--radius);
+      padding: 16px 18px; display: flex; flex-direction: column; gap: 8px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    .dorm-export-title { font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+    .dorm-export-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .dorm-export-btn {
+      width: 100%; padding: 12px; border-radius: 12px;
+      border: 2px solid #fbbf24; background: rgba(251,191,36,0.12); color: #fbbf24;
+      font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; letter-spacing: -0.01em;
+    }
+    .dorm-export-btn:hover { background: rgba(251,191,36,0.22); box-shadow: 0 0 0 3px rgba(251,191,36,0.15); }
+    .dorm-export-btn:active { transform: scale(0.97); }
   </style>
 </head>
 <body>
@@ -1302,6 +1420,7 @@
       <button type="button" class="nav-btn active" data-view="qr">QR 스캔</button>
       <button type="button" class="nav-btn" data-view="log">식사현황</button>
       <button type="button" class="nav-btn" data-view="students">학생정보</button>
+      <button type="button" class="nav-btn" data-view="dorm">기숙사관리</button>
     </nav>
     <div class="clock" id="clock"></div>
   </header>
@@ -1394,6 +1513,43 @@
       </div>
       <div class="stu-list-wrap">
         <div id="stu-list" class="grid"></div>
+      </div>
+    </section>
+
+
+    <!-- ===== 기숙사관리 ===== -->
+    <section class="view" data-view="dorm">
+      <div class="dorm-layout">
+        <div class="dorm-left">
+          <div class="dorm-left-head">
+            <div class="dorm-left-title" id="dorm-list-title">오늘 기숙사생 식사 완료 학생</div>
+            <div class="log-left-meta">
+              <span class="dorm-count-badge eat" id="dorm-count">0</span>
+              <span class="dorm-count-unit">명</span>
+            </div>
+            <button class="btn btn-sm" id="btn-dorm-refresh">새로고침</button>
+          </div>
+          <div id="dorm-list" class="dorm-list-scroll"></div>
+        </div>
+        <div class="dorm-right">
+          <div class="dorm-chart-card">
+            <div class="dorm-chart-head">
+              <div class="dorm-chart-title" id="dorm-chart-title">오늘 기숙사생 학년별 현황</div>
+              <div class="dorm-mode-btns">
+                <button type="button" class="dorm-mode-btn active" id="btn-dorm-eat">식사완료</button>
+                <button type="button" class="dorm-mode-btn noteat-btn" id="btn-dorm-noteat">미식사</button>
+              </div>
+            </div>
+            <div id="dorm-chart" class="dorm-chart-body">
+              <div class="empty-state">데이터 로딩 중…</div>
+            </div>
+          </div>
+          <div class="dorm-export-card">
+            <div class="dorm-export-title">식사 기록 내보내기(기숙사용)</div>
+            <div class="dorm-export-desc">오늘 기숙사생 기록을 엑셀 파일로 저장합니다.</div>
+            <button class="btn dorm-export-btn" id="btn-dorm-export">Excel 다운로드 (.xlsx)</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1792,6 +1948,7 @@
     });
     if (name !== 'qr') stopQr();
     if (name === 'log') loadTodayLog();
+    if (name === 'dorm') loadDormLog();
     if (name === 'students') loadStudents(true);
   }
   navBtns.forEach(function (b) {
@@ -2158,6 +2315,229 @@
   });
 
   /* ---------- 식사현황 ---------- */
+  /* ===== 기숙사관리 탭 ===== */
+  var dormMode = 'eat';
+  var dormEatList = [];
+  var dormNotEatList = [];
+  var dormEatSet = {};
+  var dormAllList = [];
+  var dormDateStr = '';
+
+  function loadDormLog() {
+    var listEl = document.getElementById('dorm-list');
+    listEl.innerHTML = '<div class="empty-state">불러오는 중\u2026</div>';
+
+    var needStudents = !studentsCache || !studentsCache.length;
+    var p = needStudents
+      ? Promise.all([api('students'), api('todayLog')])
+      : api('todayLog').then(function(r) { return [null, r]; });
+
+    p.then(function(arr) {
+      var stuRes = arr[0], logRes = arr[1];
+      if (stuRes && stuRes.ok) {
+        studentsCache = stuRes.students || [];
+        rebuildStudentsById(studentsCache);
+        studentsReady = true;
+        mealApplicantStatsCache = computeMealApplicantStatsClient_(studentsCache);
+      }
+      if (!logRes || !logRes.ok) {
+        listEl.innerHTML = '<div class="empty-state">' + escapeHtml((logRes && logRes.error) || '\uc624\ub958') + '</div>';
+        return;
+      }
+      dormDateStr = logRes.date || '';
+      var df = dormDateStr.replace(/-/g, '.');
+      var entries = logRes.entries || [];
+
+      dormAllList  = (studentsCache || []).filter(function(s) { return s.isDorm; });
+      dormEatSet   = {};
+      entries.forEach(function(e) { if (!isAdmin(e.studentId)) dormEatSet[e.studentId] = e; });
+      dormEatList    = dormAllList.filter(function(s) { return !!dormEatSet[s.studentId]; });
+      dormNotEatList = dormAllList.filter(function(s) { return !dormEatSet[s.studentId]; });
+
+      var ctEl = document.getElementById('dorm-chart-title');
+      if (ctEl) ctEl.textContent = '\uc624\ub298(' + df + ') \uae30\uc219\uc0ac\uc0dd \ud559\ub144\ubcc4 \ud604\ud669';
+
+      renderDormList_();
+      renderDormChart_();
+
+      var exportBtn = document.getElementById('btn-dorm-export');
+      if (exportBtn) exportBtn.onclick = function() { exportDormXlsx_(); };
+
+    }).catch(function(err) {
+      document.getElementById('dorm-list').innerHTML = '<div class="empty-state">\uc11c\ubc84 \uc624\ub958: ' + escapeHtml(err.message || '') + '</div>';
+    });
+  }
+
+  function renderDormList_() {
+    var listEl  = document.getElementById('dorm-list');
+    var countEl = document.getElementById('dorm-count');
+    var titleEl = document.getElementById('dorm-list-title');
+    var df = dormDateStr.replace(/-/g, '.');
+    var list = dormMode === 'eat' ? dormEatList : dormNotEatList;
+
+    if (countEl) {
+      countEl.textContent = String(list.length);
+      countEl.className = 'dorm-count-badge ' + dormMode;
+    }
+    if (titleEl) {
+      titleEl.textContent = dormMode === 'eat'
+        ? '\uc624\ub298(' + df + ') \uae30\uc219\uc0ac\uc0dd \uc2dd\uc0ac \uc644\ub8cc \ud559\uc0dd'
+        : '\uc624\ub298(' + df + ') \uae30\uc219\uc0ac\uc0dd \ubbf8\uc2dd\uc0ac \ud559\uc0dd';
+    }
+    if (!list.length) {
+      listEl.innerHTML = '<div class="empty-state">'
+        + (dormMode === 'eat' ? '\uc544\uc9c1 \uc2dd\uc0ac\ud55c \uae30\uc219\uc0ac\uc0dd\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.' : '\ubaa8\ub4e0 \uae30\uc219\uc0ac\uc0dd\uc774 \uc2dd\uc0ac\ud588\uc2b5\ub2c8\ub2e4! \uD83C\uDF89')
+        + '</div>';
+      return;
+    }
+    listEl.innerHTML = list.map(function(s) {
+      var photo = s.photoUrl ? ensurePhotoLarge(s.photoUrl) : fallbackPhoto();
+      var timeStr = (dormMode === 'eat' && dormEatSet[s.studentId])
+        ? '<div class="time">' + escapeHtml((dormEatSet[s.studentId].time || '').slice(11, 19)) + '</div>'
+        : '<div class="time" style="background:rgba(248,113,113,0.15);color:var(--danger)">\ubbf8\uc2dd\uc0ac</div>';
+      return '<div class="student-card">'
+        + '<img src="' + escapeHtml(photo) + '" onerror="this.onerror=null;this.src=\'' + fallbackPhoto() + '\'" alt="">'
+        + '<div class="nm">' + escapeHtml(s.name || '-') + '</div>'
+        + '<div class="meta">' + escapeHtml(s.studentId || '') + '</div>'
+        + timeStr
+        + '</div>';
+    }).join('');
+  }
+
+  function renderDormChart_() {
+    var chartEl = document.getElementById('dorm-chart');
+    if (!chartEl) return;
+    if (!dormAllList.length) {
+      chartEl.innerHTML = '<div class="empty-state" style="font-size:13px">\uae30\uc219\uc0ac\uc0dd \ub370\uc774\ud130\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.</div>';
+      return;
+    }
+    function gradeOf(s) {
+      var d = String(s.studentId || '').replace(/\D/g, '');
+      return d.length === 9 ? parseInt(d.charAt(4), 10) : 0;
+    }
+    var eatByG = [0,0,0], totalByG = [0,0,0];
+    dormAllList.forEach(function(s)  { var g=gradeOf(s); if(g>=1&&g<=3) totalByG[g-1]++; });
+    dormEatList.forEach(function(s)  { var g=gradeOf(s); if(g>=1&&g<=3) eatByG[g-1]++; });
+
+    var showList = dormMode === 'eat' ? dormEatList : dormNotEatList;
+    var showByG = [0,0,0];
+    showList.forEach(function(s) { var g=gradeOf(s); if(g>=1&&g<=3) showByG[g-1]++; });
+
+    var labels = ['1\ud559\ub144','2\ud559\ub144','3\ud559\ub144'];
+    var html = labels.map(function(label, i) {
+      var total = totalByG[i];
+      if (!total) return '';
+      var showN = showByG[i];
+      var pct = Math.round((showN / total) * 100);
+      var barClass = dormMode === 'eat' ? 'dorm-bar-eat' : 'dorm-bar-noteat';
+      var countColor = dormMode === 'eat' ? '#fbbf24' : 'var(--danger)';
+      var totalStr = ' <span style="color:#6b7280;font-weight:600;font-size:12px">/ ' + total + '\uba85</span>';
+      return '<div class="dorm-chart-row">'
+        + '<div class="dorm-chart-label">'
+        + '<span class="dorm-chart-label-grade">' + label + '</span>'
+        + '<span style="font-weight:800">'
+        + '<span style="color:' + countColor + '">' + showN + '\uba85</span>'
+        + totalStr
+        + '</span></div>'
+        + '<div class="dorm-bar-wrap"><div class="' + barClass + '" style="width:' + pct + '%">'
+        + (showN > 0 ? '<span class="dorm-bar-val">' + showN + '</span>' : '')
+        + '</div></div>'
+        + '</div>';
+    }).join('');
+
+    var totalAll  = dormAllList.length;
+    var totalEat  = dormEatList.length;
+    var totalNot  = dormNotEatList.length;
+    var showTotal = dormMode === 'eat' ? totalEat : totalNot;
+    var totColor  = dormMode === 'eat' ? '#fbbf24' : 'var(--danger)';
+    html += '<div class="dorm-chart-total">'
+      + '<span class="dorm-chart-total-label">\uc804\uccb4 \uae30\uc219\uc0ac\uc0dd</span>'
+      + '<span style="font-weight:900">'
+      + '<span style="color:' + totColor + ';font-size:20px">' + showTotal + '\uba85</span>'
+      + ' <span style="color:#fbbf24;font-size:13px">\uc2dd ' + totalEat + '</span>'
+      + '<span style="color:#6b7280;font-size:12px"> / </span>'
+      + '<span style="color:var(--danger);font-size:13px">\ubbf8 ' + totalNot + '</span>'
+      + '<span style="color:#6b7280;font-size:12px"> / ' + totalAll + '\uba85</span>'
+      + '</span></div>';
+
+    chartEl.innerHTML = html;
+  }
+
+  function exportDormXlsx_() {
+    if (!dormAllList.length) { alert('\uae30\uc219\uc0ac\uc0dd \ub370\uc774\ud130\uac00 \uc5c6\uc2b5\ub2c8\ub2e4.'); return; }
+    if (typeof XLSX === 'undefined') { alert('\uc5d1\uc140 \ub77c\uc774\ube0c\ub7ec\ub9ac \ub85c\ub4dc \uc911\uc785\ub2c8\ub2e4. \uc7a0\uc2dc \ud6c4 \ub2e4\uc2dc \uc2dc\ub3c4\ud574\uc8fc\uc138\uc694.'); return; }
+
+    function gradeOf(s) { var d=String(s.studentId||'').replace(/\D/g,''); return d.length===9?parseInt(d.charAt(4),10):0; }
+    function clsOf(s)   { var d=String(s.studentId||'').replace(/\D/g,''); return d.length===9?parseInt(d.substring(5,7),10):0; }
+
+    var wb = XLSX.utils.book_new(), ws = {}, R = 0;
+    var sTitle  = {font:{bold:true,sz:14,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'92400E'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sHeader = {font:{bold:true,sz:11,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'B45309'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sGrade  = {font:{bold:true,sz:11,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'D97706'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sEat    = {font:{sz:11,color:{rgb:'064E3B'}},fill:{fgColor:{rgb:'D1FAE5'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sEatA   = {font:{sz:11,color:{rgb:'064E3B'}},fill:{fgColor:{rgb:'A7F3D0'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sNot    = {font:{sz:11,color:{rgb:'7F1D1D'}},fill:{fgColor:{rgb:'FEE2E2'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sNotA   = {font:{sz:11,color:{rgb:'7F1D1D'}},fill:{fgColor:{rgb:'FECACA'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sSub    = {font:{bold:true,sz:11,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'92400E'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sTotal  = {font:{bold:true,sz:13,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'451A03'}},alignment:{horizontal:'center',vertical:'center'}};
+    var sc = function(r,c,v,s){ var a=XLSX.utils.encode_cell({r:r,c:c}); ws[a]={v:v,t:typeof v==='number'?'n':'s',s:s}; };
+    var mg = function(r1,c1,r2,c2){ if(!ws['!merges'])ws['!merges']=[]; ws['!merges'].push({s:{r:r1,c:c1},e:{r:r2,c:c2}}); };
+
+    sc(R,0,'\uae30\uc219\uc0ac\uc0dd \uc2dd\uc0ac \uae30\ub85d (' + dormDateStr.replace(/-/g,'.') + ')  \uc2dd\uc0ac: '+dormEatList.length+'\uba85 / \ubbf8\uc2dd\uc0ac: '+dormNotEatList.length+'\uba85',sTitle);
+    for(var ti=1;ti<=4;ti++) sc(R,ti,'',sTitle); mg(R,0,R,4); R++;
+    ['\ud559\ub144','\ubc18','\ud559\ubc88','\uc774\ub984','\uc2dd\uc0ac\uc5ec\ubd80/\uc2dc\uac01'].forEach(function(h,ci){ sc(R,ci,h,sHeader); }); R++;
+
+    [1,2,3].forEach(function(g) {
+      var grStu = dormAllList.filter(function(s){ return gradeOf(s)===g; });
+      if (!grStu.length) return;
+      sc(R,0,'\u2500\u2500 '+g+'\ud559\ub144 \u2500\u2500',sGrade);
+      for(var gi=1;gi<=4;gi++) sc(R,gi,'',sGrade); mg(R,0,R,4); R++;
+      var sorted = grStu.slice().sort(function(a,b){ return String(a.studentId||'').localeCompare(String(b.studentId||'')); });
+      var rowAlt = 0;
+      sorted.forEach(function(s) {
+        var isEat = !!dormEatSet[s.studentId];
+        var sr = isEat ? (rowAlt%2===0?sEat:sEatA) : (rowAlt%2===0?sNot:sNotA);
+        var tv = isEat ? (dormEatSet[s.studentId].time||'').slice(11,19) : '\ubbf8\uc2dd\uc0ac';
+        sc(R,0,g+'\ud559\ub144',sr); sc(R,1,clsOf(s)+'\ubc18',sr);
+        sc(R,2,s.studentId||'',sr); sc(R,3,s.name||'',sr); sc(R,4,tv,sr);
+        R++; rowAlt++;
+      });
+      var gEat = grStu.filter(function(s){ return !!dormEatSet[s.studentId]; }).length;
+      sc(R,0,g+'\ud559\ub144 \uc18c\uacc4',sSub); sc(R,1,'',sSub); sc(R,2,'',sSub);
+      sc(R,3,'\uc2dd\uc0ac: '+gEat+'\uba85 / \ubbf8\uc2dd\uc0ac: '+(grStu.length-gEat)+'\uba85',sSub); sc(R,4,'',sSub);
+      mg(R,0,R,2); R++; R++;
+    });
+
+    sc(R,0,'\u2605 \uc804\uccb4 \ud569\uacc4',sTotal); sc(R,1,'',sTotal); sc(R,2,'',sTotal);
+    sc(R,3,'\uc2dd\uc0ac: '+dormEatList.length+'\uba85 / \ubbf8\uc2dd\uc0ac: '+dormNotEatList.length+'\uba85',sTotal);
+    sc(R,4,'\uae30\uc219\uc0ac\uc0dd '+dormAllList.length+'\uba85',sTotal);
+    mg(R,0,R,2); R++;
+
+    ws['!cols']=[{wch:10},{wch:8},{wch:16},{wch:14},{wch:14}];
+    ws['!rows']=[]; ws['!rows'][0]={hpt:30}; ws['!rows'][1]={hpt:22};
+    ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:R,c:4}});
+    XLSX.utils.book_append_sheet(wb,ws,'\uae30\uc219\uc0ac\uae09\uc2dd\uae30\ub85d');
+    XLSX.writeFile(wb,'\uae30\uc219\uc0ac\uae09\uc2dd\uae30\ub85d_'+dormDateStr+'.xlsx');
+  }
+
+  document.getElementById('btn-dorm-eat').addEventListener('click', function() {
+    if (dormMode === 'eat') return;
+    dormMode = 'eat';
+    this.classList.add('active');
+    document.getElementById('btn-dorm-noteat').classList.remove('active');
+    renderDormList_(); renderDormChart_();
+  });
+  document.getElementById('btn-dorm-noteat').addEventListener('click', function() {
+    if (dormMode === 'noteat') return;
+    dormMode = 'noteat';
+    this.classList.add('active');
+    document.getElementById('btn-dorm-eat').classList.remove('active');
+    renderDormList_(); renderDormChart_();
+  });
+  document.getElementById('btn-dorm-refresh').addEventListener('click', loadDormLog);
+
+  /* ===== 기숙사관리 탭 끝 ===== */
+
   function loadTodayLog() {
     var listEl = document.getElementById('log-list');
     var countEl = document.getElementById('log-count');
