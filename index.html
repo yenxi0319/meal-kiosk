@@ -1011,10 +1011,7 @@
       justify-content: center;
       gap: 7px;
     }
-    .stu-dorm-filter-btn::before {
-      content: '🏠';
-      font-size: 13px;
-    }
+
     .stu-dorm-filter-btn:hover {
       background: rgba(251, 191, 36, 0.22);
       border-color: #fbbf24;
@@ -1318,15 +1315,16 @@
       box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
     }
     .dorm-chart-head {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; flex-direction: column; align-items: center;
       flex-shrink: 0; gap: 8px;
     }
     .dorm-chart-title {
       font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -0.02em;
+      text-align: center; width: 100%;
     }
-    .dorm-mode-btns { display: flex; gap: 5px; flex-shrink: 0; }
+    .dorm-mode-btns { display: flex; gap: 6px; width: 100%; justify-content: center; }
     .dorm-mode-btn {
-      padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800;
+      flex: 1; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;
       font-family: inherit; cursor: pointer; letter-spacing: -0.01em;
       transition: background 0.13s, border-color 0.13s;
       border: 1.5px solid rgba(251,191,36,0.45);
@@ -1522,7 +1520,7 @@
       <div class="dorm-layout">
         <div class="dorm-left">
           <div class="dorm-left-head">
-            <div class="dorm-left-title" id="dorm-list-title">오늘 기숙사생 식사 완료 학생</div>
+            <div class="dorm-left-title" id="dorm-list-title">오늘 기숙사생 식사 완료</div>
             <div class="log-left-meta">
               <span class="dorm-count-badge eat" id="dorm-count">0</span>
               <span class="dorm-count-unit">명</span>
@@ -2381,8 +2379,8 @@
     }
     if (titleEl) {
       titleEl.textContent = dormMode === 'eat'
-        ? '\uc624\ub298(' + df + ') \uae30\uc219\uc0ac\uc0dd \uc2dd\uc0ac \uc644\ub8cc \ud559\uc0dd'
-        : '\uc624\ub298(' + df + ') \uae30\uc219\uc0ac\uc0dd \ubbf8\uc2dd\uc0ac \ud559\uc0dd';
+        ? '오늘(' + df + ') 기숙사생 식사 완료'
+        : '오늘(' + df + ') 기숙사생 미식사';
     }
     if (!list.length) {
       listEl.innerHTML = '<div class="empty-state">'
