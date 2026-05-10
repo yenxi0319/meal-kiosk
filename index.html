@@ -969,6 +969,63 @@
       background: transparent;
       color: var(--text-muted);
     }
+    .stu-clear-filter-btn.is-active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #063330;
+      box-shadow: 0 2px 10px rgba(79, 209, 197, 0.35);
+    }
+    .stu-clear-filter-btn.is-active:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.25);
+    }
+    .stu-dorm-filter-wrap {
+      flex: 1 1 0;
+      min-height: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+    }
+    .stu-dorm-filter-btn {
+      width: 100%;
+      height: 100%;
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(251, 191, 36, 0.55);
+      background: rgba(251, 191, 36, 0.10);
+      color: #fbbf24;
+      font-size: 14px;
+      font-weight: 800;
+      font-family: inherit;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    .stu-dorm-filter-btn::before {
+      content: '🏠';
+      font-size: 13px;
+    }
+    .stu-dorm-filter-btn:hover {
+      background: rgba(251, 191, 36, 0.22);
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
+    }
+    .stu-dorm-filter-btn:active { transform: scale(0.97); }
+    .stu-dorm-filter-btn.is-active {
+      background: rgba(251, 191, 36, 0.28);
+      border-color: #fbbf24;
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.20);
+    }
     .stu-pills {
       display: flex;
       flex-wrap: wrap;
@@ -1409,6 +1466,8 @@
   var scanBeepAudioCtx = null;
   /** 활성화된 반 필터: { grade: number, classNo: number } | null */
   var activeClassFilter = null;
+  /** 기숙사생 필터 활성 여부 */
+  var activeDormFilter = false;
 
   function todayKeySeoul() {
     try {
@@ -1558,6 +1617,7 @@
     } else {
       periodLine = '<div class="stu-total-period-line is-empty">기간 정보 없음</div>';
     }
+    var dormTotal = (studentsCache || []).filter(function(s){ return s.isDorm; }).length;
     html += '<div class="stu-dashboard-side">';
     html += '<div class="stu-dashboard-total" role="status">';
     html += periodLine;
@@ -1566,6 +1626,9 @@
     html += '</div>';
     html += '<div class="stu-clear-filter-wrap">';
     html += '<button type="button" id="btn-stu-clear-filter" class="stu-clear-filter-btn">전체 학생 보기</button>';
+    html += '</div>';
+    html += '<div class="stu-dorm-filter-wrap">';
+    html += '<button type="button" id="btn-stu-dorm-filter" class="stu-dorm-filter-btn' + (activeDormFilter ? ' is-active' : '') + '">기숙사생 보기 <span style="font-size:12px;font-weight:900;">(' + dormTotal + '명)</span></button>';
     html += '</div>';
     html += '</div>';
     mount.innerHTML = html;
@@ -1601,8 +1664,16 @@
       var active = !!activeClassFilter && activeClassFilter.grade === g && activeClassFilter.classNo === c;
       cell.classList.toggle('is-active', active);
     }
+    // 전체학생보기: 아무 필터도 없을 때 파란색 활성화
     var clearBtn = document.getElementById('btn-stu-clear-filter');
-    if (clearBtn) clearBtn.disabled = !activeClassFilter;
+    if (clearBtn) {
+      var noFilter = !activeClassFilter && !activeDormFilter;
+      clearBtn.disabled = false;
+      clearBtn.classList.toggle('is-active', noFilter);
+    }
+    // 기숙사생 버튼 동기화
+    var dormBtn = document.getElementById('btn-stu-dorm-filter');
+    if (dormBtn) dormBtn.classList.toggle('is-active', !!activeDormFilter);
   }
 
   function prefetchScanData() {
@@ -2414,6 +2485,7 @@
     var listEl = document.getElementById('stu-list');
     var q = String(document.getElementById('stu-search').value || '').trim().toLowerCase();
     var byClass = (list || []).filter(function (s) {
+      if (activeDormFilter) return !!s.isDorm;
       if (!activeClassFilter) return true;
       var gc = parseGradeClassFromStudentId_(s.studentId);
       return !!gc && gc.grade === activeClassFilter.grade && gc.classNo === activeClassFilter.classNo;
@@ -2463,8 +2535,23 @@
     }
     var clearBtn = target && target.closest ? target.closest('#btn-stu-clear-filter') : null;
     if (clearBtn && this.contains(clearBtn)) {
-      if (!activeClassFilter) return;
-      clearClassFilter_(true);
+      activeDormFilter = false;
+      activeClassFilter = null;
+      var inputEl = document.getElementById('stu-search');
+      if (inputEl) inputEl.value = '';
+      syncStudentFilterUI_();
+      if (studentsCache) renderStudents(studentsCache);
+      return;
+    }
+    var dormBtn = target && target.closest ? target.closest('#btn-stu-dorm-filter') : null;
+    if (dormBtn && this.contains(dormBtn)) {
+      activeDormFilter = !activeDormFilter;
+      if (activeDormFilter) {
+        activeClassFilter = null;
+        var inputEl2 = document.getElementById('stu-search');
+        if (inputEl2) inputEl2.value = '';
+      }
+      syncStudentFilterUI_();
       if (studentsCache) renderStudents(studentsCache);
     }
   });
