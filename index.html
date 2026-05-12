@@ -2904,6 +2904,7 @@
       if (activeClassFilter && activeClassFilter.grade === g && activeClassFilter.classNo === c) {
         clearClassFilter_(true);
       } else {
+        activeDormFilter = false;
         activeClassFilter = { grade: g, classNo: c };
         syncStudentFilterUI_();
       }
