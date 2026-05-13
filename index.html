@@ -1271,7 +1271,174 @@
     .student-card.student-card--clickable:active {
       transform: scale(0.98);
     }
-    /* ===== 기숙사관리 탭 ===== */
+    /* ===== 통계 탭 ===== */
+  var statsChart = null;
+
+  function loadStats() {
+    var periodEl = document.getElementById('stats-period-label');
+    var subEl    = document.getElementById('stats-period-sub');
+    periodEl.textContent = '데이터 불러오는 중…';
+    subEl.textContent = '';
+
+    api('stats').then(function(res) {
+      if (!res || !res.ok) {
+        periodEl.textContent = '오류: ' + escapeHtml((res && res.error) || '알 수 없는 오류');
+        return;
+      }
+
+      var dates   = res.dates   || [];
+      var byGrade = res.byGrade || [[],[],[]];
+      var total   = res.total   || [];
+      var pStart  = (res.periodStart || '').replace(/-/g, '.');
+      var pEnd    = (res.periodEnd   || '').replace(/-/g, '.');
+
+      periodEl.textContent = '방과후 기간: ' + pStart + ' ~ ' + pEnd;
+      subEl.textContent    = '총 ' + dates.length + '일';
+
+      // 요약 통계
+      var sumG = [0, 0, 0], sumTotal = 0, maxVal = 0, maxDay = '';
+      for (var i = 0; i < dates.length; i++) {
+        sumG[0] += byGrade[0][i] || 0;
+        sumG[1] += byGrade[1][i] || 0;
+        sumG[2] += byGrade[2][i] || 0;
+        sumTotal += total[i] || 0;
+        if ((total[i] || 0) > maxVal) { maxVal = total[i]; maxDay = dates[i]; }
+      }
+      var avg = dates.length > 0 ? Math.round(sumTotal / dates.length) : 0;
+
+      document.getElementById('stats-sum-g1').textContent    = sumG[0] + '명';
+      document.getElementById('stats-sum-g2').textContent    = sumG[1] + '명';
+      document.getElementById('stats-sum-g3').textContent    = sumG[2] + '명';
+      document.getElementById('stats-sum-total').textContent = sumTotal + '명';
+      document.getElementById('stats-avg').textContent       = avg + '명';
+      document.getElementById('stats-max-day').textContent   = maxDay ? maxDay.replace(/-/g, '.') + ' (' + maxVal + '명)' : '-';
+
+      // 차트 그리기
+      renderStatsChart_(dates, byGrade, total);
+
+    }).catch(function(err) {
+      document.getElementById('stats-period-label').textContent = '서버 오류: ' + escapeHtml(err.message || '');
+    });
+  }
+
+  function renderStatsChart_(dates, byGrade, total) {
+    var canvas = document.getElementById('stats-canvas');
+    var wrap   = canvas.parentElement;
+
+    // canvas 크기 설정
+    canvas.width  = wrap.offsetWidth  || 800;
+    canvas.height = wrap.offsetHeight || 260;
+    var W = canvas.width, H = canvas.height;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    if (!dates.length) {
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('데이터가 없습니다.', W/2, H/2);
+      return;
+    }
+
+    var PAD_L = 44, PAD_R = 16, PAD_T = 20, PAD_B = 54;
+    var chartW = W - PAD_L - PAD_R;
+    var chartH = H - PAD_T - PAD_B;
+
+    // 최대값
+    var maxVal = 0;
+    for (var i = 0; i < total.length; i++) if ((total[i]||0) > maxVal) maxVal = total[i];
+    maxVal = Math.max(maxVal, 1);
+    var yMax = Math.ceil(maxVal / 10) * 10 + 10;
+
+    // 색상
+    var COLORS = ['rgba(248,113,113,0.85)', 'rgba(251,191,36,0.85)', 'rgba(52,211,153,0.85)'];
+    var COLORS_TOTAL = 'rgba(96,165,250,0.85)';
+
+    var n = dates.length;
+    var groupW = chartW / n;
+    var barW   = Math.min(Math.max(groupW * 0.55, 4), 28);
+    var subBarW = barW / 4;
+
+    // Y축 그리드
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    var ySteps = 5;
+    for (var yi = 0; yi <= ySteps; yi++) {
+      var yVal = Math.round((yMax / ySteps) * yi);
+      var yPos = PAD_T + chartH - (yVal / yMax) * chartH;
+      ctx.beginPath(); ctx.moveTo(PAD_L, yPos); ctx.lineTo(W - PAD_R, yPos); ctx.stroke();
+      ctx.fillText(String(yVal), PAD_L - 5, yPos + 3);
+    }
+
+    // 막대 그리기 (그룹: 1학년, 2학년, 3학년, 전체)
+    for (var di = 0; di < n; di++) {
+      var cx = PAD_L + di * groupW + groupW / 2;
+
+      // 1,2,3학년 작은 막대
+      for (var g = 0; g < 3; g++) {
+        var val = byGrade[g][di] || 0;
+        var bh  = (val / yMax) * chartH;
+        var bx  = cx - barW/2 + g * (barW/3 + 0.5);
+        var bw  = barW / 3 - 1;
+        ctx.fillStyle = COLORS[g];
+        ctx.fillRect(bx, PAD_T + chartH - bh, bw, bh);
+      }
+
+      // 전체 꺾은선 점
+      var tVal = total[di] || 0;
+      var ty   = PAD_T + chartH - (tVal / yMax) * chartH;
+      ctx.fillStyle = COLORS_TOTAL;
+      ctx.beginPath(); ctx.arc(cx, ty, 3.5, 0, Math.PI*2); ctx.fill();
+
+      // 꺾은선 연결
+      if (di > 0) {
+        var prevCx = PAD_L + (di-1) * groupW + groupW / 2;
+        var prevTy = PAD_T + chartH - ((total[di-1]||0) / yMax) * chartH;
+        ctx.strokeStyle = COLORS_TOTAL;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(prevCx, prevTy); ctx.lineTo(cx, ty); ctx.stroke();
+      }
+
+      // 전체 수치 표시 (공간 충분할 때만)
+      if (tVal > 0 && groupW > 20) {
+        ctx.fillStyle = 'rgba(96,165,250,0.9)';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(tVal), cx, ty - 7);
+      }
+
+      // X축 날짜 라벨
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '9px sans-serif';
+      ctx.textAlign = 'center';
+      var label = dates[di].slice(5); // MM-DD
+      // 날짜가 많으면 일부만 표시
+      if (n <= 31 || di % Math.ceil(n/15) === 0) {
+        ctx.save();
+        ctx.translate(cx, PAD_T + chartH + 10);
+        ctx.rotate(-Math.PI / 4);
+        ctx.fillText(label, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    // X축 선
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PAD_L, PAD_T + chartH);
+    ctx.lineTo(W - PAD_R, PAD_T + chartH);
+    ctx.stroke();
+  }
+
+  document.getElementById('btn-stats-refresh').addEventListener('click', loadStats);
+
+  /* ===== 통계 탭 끝 ===== */
+
+  /* ===== 기숙사관리 탭 ===== */
     .view[data-view="dorm"] { overflow: hidden; }
     .dorm-layout {
       display: flex; flex-direction: row; gap: 14px;
@@ -1390,6 +1557,62 @@
     }
     .dorm-export-btn:hover { background: rgba(251,191,36,0.22); box-shadow: 0 0 0 3px rgba(251,191,36,0.15); }
     .dorm-export-btn:active { transform: scale(0.97); }
+    /* ===== 통계 탭 ===== */
+    .view[data-view="stats"] { overflow-y: auto; }
+    .stats-layout {
+      display: flex; flex-direction: column; gap: 16px;
+      flex: 1; min-height: 0;
+    }
+    .stats-head-card {
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 20px;
+      display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+    }
+    .stats-period-label {
+      font-size: 15px; font-weight: 900; color: var(--text); letter-spacing: -0.03em;
+    }
+    .stats-period-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .stats-legend {
+      display: flex; gap: 12px; margin-left: auto; flex-wrap: wrap;
+    }
+    .stats-legend-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: 700; color: var(--text-muted);
+    }
+    .stats-legend-dot {
+      width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+    }
+    .stats-chart-card {
+      background: var(--bg-elevated); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+      flex: 1; min-height: 320px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .stats-chart-title {
+      font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -0.02em; flex-shrink: 0;
+    }
+    .stats-chart-wrap {
+      flex: 1; min-height: 260px; position: relative; overflow: hidden;
+    }
+    .stats-canvas-container {
+      position: absolute; inset: 0;
+    }
+    .stats-summary-row {
+      display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0;
+    }
+    .stats-summary-card {
+      flex: 1 1 120px; background: var(--surface); border-radius: 12px;
+      padding: 12px 16px; display: flex; flex-direction: column; gap: 4px;
+      border: 1px solid var(--border);
+    }
+    .stats-summary-label { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+    .stats-summary-val {
+      font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums;
+      letter-spacing: -0.03em; color: var(--accent);
+    }
+    .stats-summary-val.g1 { color: #f87171; }
+    .stats-summary-val.g2 { color: #fbbf24; }
+    .stats-summary-val.g3 { color: #34d399; }
+    .stats-summary-val.total { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -1418,6 +1641,7 @@
       <button type="button" class="nav-btn active" data-view="qr">QR 스캔</button>
       <button type="button" class="nav-btn" data-view="log">식사현황</button>
       <button type="button" class="nav-btn" data-view="dorm">기숙사관리</button>
+      <button type="button" class="nav-btn" data-view="stats">통계</button>
       <button type="button" class="nav-btn" data-view="students">학생정보(DB)</button>
     </nav>
     <div class="clock" id="clock"></div>
@@ -1548,6 +1772,67 @@
             <button class="btn dorm-export-btn" id="btn-dorm-export">Excel 다운로드 (.xlsx)</button>
           </div>
         </div>
+      </div>
+    </section>
+
+
+    <!-- ===== 통계 ===== -->
+    <section class="view" data-view="stats">
+      <div class="stats-layout">
+
+        <!-- 상단: 기간 + 범례 -->
+        <div class="stats-head-card">
+          <div>
+            <div class="stats-period-label" id="stats-period-label">방과후 기간 로딩 중…</div>
+            <div class="stats-period-sub" id="stats-period-sub"></div>
+          </div>
+          <div class="stats-legend">
+            <div class="stats-legend-item"><div class="stats-legend-dot" style="background:#f87171"></div>1학년</div>
+            <div class="stats-legend-item"><div class="stats-legend-dot" style="background:#fbbf24"></div>2학년</div>
+            <div class="stats-legend-item"><div class="stats-legend-dot" style="background:#34d399"></div>3학년</div>
+            <div class="stats-legend-item"><div class="stats-legend-dot" style="background:#60a5fa"></div>전체</div>
+          </div>
+          <button class="btn btn-sm" id="btn-stats-refresh" style="margin-left:8px">새로고침</button>
+        </div>
+
+        <!-- 차트 -->
+        <div class="stats-chart-card">
+          <div class="stats-chart-title">일별 학년별 식사 인원 현황</div>
+          <div class="stats-chart-wrap">
+            <div class="stats-canvas-container">
+              <canvas id="stats-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 요약 카드 -->
+        <div class="stats-summary-row" id="stats-summary-row">
+          <div class="stats-summary-card">
+            <div class="stats-summary-label">기간 합계 (1학년)</div>
+            <div class="stats-summary-val g1" id="stats-sum-g1">-</div>
+          </div>
+          <div class="stats-summary-card">
+            <div class="stats-summary-label">기간 합계 (2학년)</div>
+            <div class="stats-summary-val g2" id="stats-sum-g2">-</div>
+          </div>
+          <div class="stats-summary-card">
+            <div class="stats-summary-label">기간 합계 (3학년)</div>
+            <div class="stats-summary-val g3" id="stats-sum-g3">-</div>
+          </div>
+          <div class="stats-summary-card">
+            <div class="stats-summary-label">전체 합계</div>
+            <div class="stats-summary-val total" id="stats-sum-total">-</div>
+          </div>
+          <div class="stats-summary-card">
+            <div class="stats-summary-label">일 평균 (전체)</div>
+            <div class="stats-summary-val total" id="stats-avg">-</div>
+          </div>
+          <div class="stats-summary-card">
+            <div class="stats-summary-label">최다 식사일</div>
+            <div class="stats-summary-val total" style="font-size:15px" id="stats-max-day">-</div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -1947,6 +2232,7 @@
     if (name !== 'qr') stopQr();
     if (name === 'log') loadTodayLog();
     if (name === 'dorm') loadDormLog();
+    if (name === 'stats') loadStats();
     if (name === 'students') loadStudents(true);
   }
   navBtns.forEach(function (b) {
@@ -2313,6 +2599,173 @@
   });
 
   /* ---------- 식사현황 ---------- */
+  /* ===== 통계 탭 ===== */
+  var statsChart = null;
+
+  function loadStats() {
+    var periodEl = document.getElementById('stats-period-label');
+    var subEl    = document.getElementById('stats-period-sub');
+    periodEl.textContent = '데이터 불러오는 중…';
+    subEl.textContent = '';
+
+    api('stats').then(function(res) {
+      if (!res || !res.ok) {
+        periodEl.textContent = '오류: ' + escapeHtml((res && res.error) || '알 수 없는 오류');
+        return;
+      }
+
+      var dates   = res.dates   || [];
+      var byGrade = res.byGrade || [[],[],[]];
+      var total   = res.total   || [];
+      var pStart  = (res.periodStart || '').replace(/-/g, '.');
+      var pEnd    = (res.periodEnd   || '').replace(/-/g, '.');
+
+      periodEl.textContent = '방과후 기간: ' + pStart + ' ~ ' + pEnd;
+      subEl.textContent    = '총 ' + dates.length + '일';
+
+      // 요약 통계
+      var sumG = [0, 0, 0], sumTotal = 0, maxVal = 0, maxDay = '';
+      for (var i = 0; i < dates.length; i++) {
+        sumG[0] += byGrade[0][i] || 0;
+        sumG[1] += byGrade[1][i] || 0;
+        sumG[2] += byGrade[2][i] || 0;
+        sumTotal += total[i] || 0;
+        if ((total[i] || 0) > maxVal) { maxVal = total[i]; maxDay = dates[i]; }
+      }
+      var avg = dates.length > 0 ? Math.round(sumTotal / dates.length) : 0;
+
+      document.getElementById('stats-sum-g1').textContent    = sumG[0] + '명';
+      document.getElementById('stats-sum-g2').textContent    = sumG[1] + '명';
+      document.getElementById('stats-sum-g3').textContent    = sumG[2] + '명';
+      document.getElementById('stats-sum-total').textContent = sumTotal + '명';
+      document.getElementById('stats-avg').textContent       = avg + '명';
+      document.getElementById('stats-max-day').textContent   = maxDay ? maxDay.replace(/-/g, '.') + ' (' + maxVal + '명)' : '-';
+
+      // 차트 그리기
+      renderStatsChart_(dates, byGrade, total);
+
+    }).catch(function(err) {
+      document.getElementById('stats-period-label').textContent = '서버 오류: ' + escapeHtml(err.message || '');
+    });
+  }
+
+  function renderStatsChart_(dates, byGrade, total) {
+    var canvas = document.getElementById('stats-canvas');
+    var wrap   = canvas.parentElement;
+
+    // canvas 크기 설정
+    canvas.width  = wrap.offsetWidth  || 800;
+    canvas.height = wrap.offsetHeight || 260;
+    var W = canvas.width, H = canvas.height;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    if (!dates.length) {
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('데이터가 없습니다.', W/2, H/2);
+      return;
+    }
+
+    var PAD_L = 44, PAD_R = 16, PAD_T = 20, PAD_B = 54;
+    var chartW = W - PAD_L - PAD_R;
+    var chartH = H - PAD_T - PAD_B;
+
+    // 최대값
+    var maxVal = 0;
+    for (var i = 0; i < total.length; i++) if ((total[i]||0) > maxVal) maxVal = total[i];
+    maxVal = Math.max(maxVal, 1);
+    var yMax = Math.ceil(maxVal / 10) * 10 + 10;
+
+    // 색상
+    var COLORS = ['rgba(248,113,113,0.85)', 'rgba(251,191,36,0.85)', 'rgba(52,211,153,0.85)'];
+    var COLORS_TOTAL = 'rgba(96,165,250,0.85)';
+
+    var n = dates.length;
+    var groupW = chartW / n;
+    var barW   = Math.min(Math.max(groupW * 0.55, 4), 28);
+    var subBarW = barW / 4;
+
+    // Y축 그리드
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    var ySteps = 5;
+    for (var yi = 0; yi <= ySteps; yi++) {
+      var yVal = Math.round((yMax / ySteps) * yi);
+      var yPos = PAD_T + chartH - (yVal / yMax) * chartH;
+      ctx.beginPath(); ctx.moveTo(PAD_L, yPos); ctx.lineTo(W - PAD_R, yPos); ctx.stroke();
+      ctx.fillText(String(yVal), PAD_L - 5, yPos + 3);
+    }
+
+    // 막대 그리기 (그룹: 1학년, 2학년, 3학년, 전체)
+    for (var di = 0; di < n; di++) {
+      var cx = PAD_L + di * groupW + groupW / 2;
+
+      // 1,2,3학년 작은 막대
+      for (var g = 0; g < 3; g++) {
+        var val = byGrade[g][di] || 0;
+        var bh  = (val / yMax) * chartH;
+        var bx  = cx - barW/2 + g * (barW/3 + 0.5);
+        var bw  = barW / 3 - 1;
+        ctx.fillStyle = COLORS[g];
+        ctx.fillRect(bx, PAD_T + chartH - bh, bw, bh);
+      }
+
+      // 전체 꺾은선 점
+      var tVal = total[di] || 0;
+      var ty   = PAD_T + chartH - (tVal / yMax) * chartH;
+      ctx.fillStyle = COLORS_TOTAL;
+      ctx.beginPath(); ctx.arc(cx, ty, 3.5, 0, Math.PI*2); ctx.fill();
+
+      // 꺾은선 연결
+      if (di > 0) {
+        var prevCx = PAD_L + (di-1) * groupW + groupW / 2;
+        var prevTy = PAD_T + chartH - ((total[di-1]||0) / yMax) * chartH;
+        ctx.strokeStyle = COLORS_TOTAL;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(prevCx, prevTy); ctx.lineTo(cx, ty); ctx.stroke();
+      }
+
+      // 전체 수치 표시 (공간 충분할 때만)
+      if (tVal > 0 && groupW > 20) {
+        ctx.fillStyle = 'rgba(96,165,250,0.9)';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(tVal), cx, ty - 7);
+      }
+
+      // X축 날짜 라벨
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '9px sans-serif';
+      ctx.textAlign = 'center';
+      var label = dates[di].slice(5); // MM-DD
+      // 날짜가 많으면 일부만 표시
+      if (n <= 31 || di % Math.ceil(n/15) === 0) {
+        ctx.save();
+        ctx.translate(cx, PAD_T + chartH + 10);
+        ctx.rotate(-Math.PI / 4);
+        ctx.fillText(label, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    // X축 선
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(PAD_L, PAD_T + chartH);
+    ctx.lineTo(W - PAD_R, PAD_T + chartH);
+    ctx.stroke();
+  }
+
+  document.getElementById('btn-stats-refresh').addEventListener('click', loadStats);
+
+  /* ===== 통계 탭 끝 ===== */
+
   /* ===== 기숙사관리 탭 ===== */
   var dormMode = 'eat';
   var dormEatList = [];
